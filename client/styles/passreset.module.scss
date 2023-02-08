@@ -1,0 +1,159 @@
+.PassReset {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-height: 100vh;
+
+	background-image: url('/static/auth-bg.jpg');
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: bottom;
+
+	&__header {
+		position: relative;
+		margin-top: 46px;
+		display: flex;
+		flex-direction: column;
+		justify-content: end;
+		align-items: flex-end;
+		a {
+			color: #fff;
+			font-weight: 900;
+			font-size: 24px;
+			line-height: 36px;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			cursor: pointer;
+
+			&:hover {
+				color: #fb9f0d;
+				transform: scale(1.05);
+			}
+		}
+	}
+	&__title {
+		color: #fff;
+
+		font-weight: 700;
+		font-size: 36px;
+		line-height: 54px;
+		margin-top: 40px;
+	}
+	&__subtitle {
+		color: #fff;
+		margin-top: 10px;
+		max-width: 750px;
+		text-align: center;
+		font-weight: 400;
+		font-size: 18px;
+		line-height: 27px;
+		b {
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 27px;
+		}
+	}
+	&__wrapper {
+		max-width: 450px;
+	}
+
+	&__form {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		margin-top: 25px;
+		&__main-title {
+			align-self: center;
+			color: #fff;
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 27px;
+			margin-bottom: 40px;
+		}
+		&_wrapper {
+			width: 100%;
+			margin-bottom: 24px;
+		}
+		&_title {
+			color: #fff;
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 21px;
+			letter-spacing: 0.1em;
+			span {
+				text-decoration-line: underline;
+				color: #fb9f0d;
+				cursor: pointer;
+				padding: 0 4px;
+			}
+		}
+		&_input {
+			min-width: 446px;
+			padding: 14px 0px;
+			font-weight: 400;
+			font-size: 16px;
+			color: #000;
+		}
+		&_checkbox {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+		}
+		&_warning {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: flex-start;
+			div {
+				color: #d31225;
+			}
+			&_img {
+				margin-right: 12px;
+			}
+		}
+
+		&_button_PassReset {
+			align-self: center;
+			background: linear-gradient(135.29deg, #ebc07d -1.97%, #ce7e00 100.91%);
+
+			padding: 11px 50px;
+			border-radius: 20px;
+
+			color: #fff;
+			letter-spacing: 0.1em;
+			cursor: pointer;
+
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 27px;
+			text-align: center;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			&:hover {
+				background: linear-gradient(135.29deg, #e4a23b -1.97%, #d78809 100.91%);
+				transform: scale(1.05);
+			}
+		}
+	}
+	&__help {
+		&__title {
+			font-weight: 400;
+			font-size: 18px;
+			line-height: 27px;
+			color: #fff;
+			margin-top: 15px;
+			a {
+				color: #fb9f0d;
+				font-weight: 700;
+				text-decoration-line: underline;
+				padding-left: 4px;
+				&:hover {
+					color: #fff;
+				}
+			}
+		}
+	}
+}

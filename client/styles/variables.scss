@@ -1,0 +1,166 @@
+:root {
+	/* Fonts */
+	--body-font: 'Inter', -apple-system, system-ui, sans-serif;
+
+	/* Colors */
+
+	--Popup-bg: rgba(0, 0, 0, 0.8);
+	--Popup-bg-hover: rgba(0, 0, 0, 0.85);
+	--Popup-bg-focus: rgba(0, 0, 0, 0.75);
+	/* Light Theme */
+
+	--Light-bg-primary: #f5f7f8;
+
+	--Light-bg-primary-hover: #eaeced;
+
+	--Light-font-color: #313638;
+
+	--Light-title-color: #0d73d1;
+
+	--Light-link-color: #6a00ff;
+	--Light-link-color-hover: #8b44d6;
+	--Light-link-color-focus: #5e00e2;
+
+	--Light-button-bg: #0b0643;
+	--Light-button-bg-hover: #16114e;
+	--Light-button-bg-focus: #258ef0;
+
+	--Light-toggleTheme-bg: #0083ff;
+
+	/* Projects styles */
+	// --Light-projects-font-title: #6a00ff;
+	// --Light-projects-font-title-hover: #942aff;
+	// --Light-projects-font-title-focus: #43009d;
+	--Light-projects-bg: #ffffff;
+	--Light-projects-bg-tags: #f5f5f5;
+
+	--Light-projects-font-btn-primary: #fff;
+	--Light-projects-bg-btn-primary: #0c008a;
+	--Light-projects-bg-btn-primary-hover: #1707c6;
+	--Light-projects-bg-btn-primary-focus: #000070;
+
+	--Light-projects-font-btn-secondary: #18181a;
+	--Light-projects-bg-btn-secondary: #ffffff;
+	--Light-projects-bg-btn-secondary-hover: #f0f0f1;
+	--Light-projects-bg-btn-secondary-focus: #cdcdcf;
+	/* End Dark Projects styles */
+
+	--Dark-bg-primary: #18181a;
+	--Dark-bg-primary-hover: #28282a;
+
+	--Dark-bg-secondary: #28282a;
+	--Dark-font-color: #f5f5f5;
+
+	--Dark-title-color: #66b4ff;
+	--Dark-link-color: #33ffa1;
+	--Dark-link-color-hover: #59ffc7;
+	--Dark-link-color-focus: #1de98b;
+
+	--Dark-toggleTheme-bg: #005683;
+
+	/* Projects styles */
+	--Dark-projects-bg-color: #18181a;
+
+	--Dark-projects-font-title: #33ffa1;
+	--Dark-projects-font-title-hover: #59ffc7;
+	--Dark-projects-font-title-focus: #1de98b;
+	--Dark-projects-bg-tags: #242426;
+
+	--Dark-projects-bg-btn-primary: #000073;
+	--Dark-projects-bg-btn-primary-hover: #121285;
+	--Dark-projects-bg-btn-primary-focus: #000066;
+
+	--Dark-projects-font-btn-secondary: #18181a;
+	--Dark-projects-bg-btn-secondary: #e0e0e2;
+	--Dark-projects-bg-btn-secondary-hover: #fff;
+	--Dark-projects-bg-btn-secondary-focus: #a7a7a9;
+	/* End Dark Projects styles */
+
+	/* Fonts */ // for 1440px
+	--Fonts-h1: 65px; // big titles
+	--Fonts-h2: 46px; // small titles
+	--Fonts-h3: 24px; // Big text
+	--Fonts-h4: 20px; // normal text
+	--Fonts-h5: 18px; // Big description
+	--Fonts-h6: 14px; // description
+
+	@media screen and (max-width: 1024px) {
+		--Fonts-h1: 52px; // big titles
+		// --Fonts-h2: 46px; // small titles
+		// --Fonts-h3: 24px; // Big text
+		// --Fonts-h4: 20px; // normal text
+		// --Fonts-h5: 16px; // Big description
+		// --Fonts-h6: 14px; // description
+	}
+	@media screen and (max-width: 768px) {
+		--Fonts-h1: 45px; // big titles
+		// --Fonts-h2: 46px; // small titles
+		// --Fonts-h3: 22px; // Big text
+		--Fonts-h4: 18px; // normal text
+		// --Fonts-h5: 16px; // Big description
+		// --Fonts-h6: 14px; // description
+	}
+
+	@media screen and (max-width: 600px) {
+		--Fonts-h1: 35px; // big titles
+		// --Fonts-h2: 46px; // small titles
+		--Fonts-h3: 22px; // Big text
+		--Fonts-h4: 16px; // normal text
+		// --Fonts-h5: 16px; // Big description
+		// --Fonts-h6: 14px; // description
+	}
+	@media screen and (max-width: 470px) {
+		// --Fonts-h1: 35px; // big titles
+		// --Fonts-h2: 46px; // small titles
+		--Fonts-h3: 18px; // Big text
+		--Fonts-h4: 15px; // normal text
+		--Fonts-h5: 16px; // Big description
+		// --Fonts-h6: 14px; // description
+	}
+	@media screen and (max-width: 370px) {
+		--Fonts-h1: 30px; // big titles
+		// --Fonts-h2: 46px; // small titles
+		--Fonts-h3: 16px; // Big text
+		--Fonts-h4: 12px; // normal text
+		// --Fonts-h5: 16px; // Big description
+		// --Fonts-h6: 14px; // description
+	}
+	@media screen and (max-width: 340px) {
+		--Fonts-h1: 30px; // big titles
+		// --Fonts-h2: 46px; // small titles
+		--Fonts-h3: 16px; // Big text
+		--Fonts-h4: 12px; // normal text
+		// --Fonts-h5: 16px; // Big description
+		--Fonts-h6: 12px; // description
+	}
+
+	/* Wrapper */
+	--wrapper_width: 1440px;
+	@media screen and (max-width: 1440px) {
+		--wrapper_width: 1180px;
+	}
+	@media screen and (max-width: 1200px) {
+		--wrapper_width: 980px;
+	}
+	@media screen and (max-width: 1000px) {
+		--wrapper_width: 780px;
+	}
+	@media screen and (max-width: 800px) {
+		--wrapper_width: 680px;
+	}
+	@media screen and (max-width: 700px) {
+		--wrapper_width: 590px;
+	}
+	@media screen and (max-width: 600px) {
+		--wrapper_width: 490px;
+	}
+	@media screen and (max-width: 500px) {
+		--wrapper_width: 390px;
+	}
+	@media screen and (max-width: 400px) {
+		--wrapper_width: 380px;
+	}
+	@media screen and (max-width: 380px) {
+		--wrapper_width: 360px;
+	}
+}

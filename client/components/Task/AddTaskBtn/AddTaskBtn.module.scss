@@ -1,0 +1,24 @@
+.addTaskBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	border-radius: 100%;
+	padding: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	background-color: #447fff;
+	&:hover {
+		background-color: #558afd;
+	}
+	cursor: pointer;
+	svg {
+		width: 60px;
+		height: 60px;
+		g {
+			stroke: #fff;
+		}
+	}
+}
