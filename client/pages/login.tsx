@@ -4,51 +4,61 @@ import { useFormik } from 'formik'
 
 // import { UserActions } from 'app/store/actions'
 // import { RootState } from 'app/store/reducers'
-import { LoginSchema } from '../components/Auth/LoginValidation'
+import { loginSchema } from '../components/Auth/LoginValidation'
 
 import styles from '../styles/login.module.scss'
 import Link from 'next/link'
 import { FacebookIcon } from 'src/components/svg/FacebookIcon'
 import { GoogleIcon } from 'src/components/svg/GoogleIcon'
+import { useActions } from 'src/hooks/useActions'
+import { RootState } from 'src/store'
+import { useTypedSelector } from 'src/hooks/useTypedSelector'
+import { useLoginMutation } from 'src/store/user/user.api'
+import { useRouter } from 'next/router'
 
 const LoginPage: FC = () => {
-	// const dispatch = useDispatch()
-	// const navigate = useNavigate()
-	// const { isAuth } = useSelector((state: RootState) => {
-	// 	return {
-	// 		isAuth: state.user.isAuth,
-	// 	}
-	// })
-	// if (isAuth === true) {
-	// 	navigate('/main', { replace: true })
-	// }
+	const router = useRouter()
+	const [loginRequest, { isLoading: isLoading }] = useLoginMutation()
+
+	const { isAuth } = useTypedSelector((state: RootState) => {
+		return {
+			isAuth: state.user.isAuth,
+		}
+	})
+
+	if (isAuth) {
+		router.push('/')
+	}
 
 	const formik = useFormik({
 		initialValues: {
+			email: '',
 			username: '',
 			password: '',
-			remember: '',
+			remember: false,
 		},
-		validationSchema: LoginSchema,
+		validationSchema: loginSchema,
 		onSubmit: values => {
-			// dispatch(UserActions.LogIn(values.username, values.password))
-			// UserActions.LogIn(values.username, values.password)
+			loginRequest({
+				email: values.email,
+				password: values.password,
+			})
 		},
 	})
+
 	return (
 		<div className={styles.login}>
 			<div className={styles.login__header}>
 				<a href='/'>good deeds</a>
 			</div>
-			<div className={styles.login__title}>
-				Sign up for free to start use GOOD DEEDS.
-			</div>
+			<div className={styles.login__title}>Login page.</div>
 			<div className={styles.login__wrapper}>
 				<div className={styles.login__social}>
 					<div
 						className={`${styles.login__social_btn} ${styles.login__social_facebook}`}
 					>
-						<FacebookIcon /> Continue with facebook
+						<FacebookIcon />
+						Continue with facebook
 					</div>
 					<div
 						className={`${styles.login__social_btn} ${styles.login__social_google}`}
@@ -69,17 +79,15 @@ const LoginPage: FC = () => {
 						Sign up with your email address
 					</div>
 					<div className={styles.login__form_wrapper}>
-						<div className={styles.login__form_title}>
-							Email address or username
-						</div>
+						<div className={styles.login__form_title}>Email address</div>
 						<input
 							className={styles.login__form_input}
-							placeholder='Email address or username.'
-							name='username'
+							placeholder='Email address.'
+							name='email'
 							type='text'
 							onChange={formik.handleChange}
 							onBlur={formik.handleBlur}
-							value={formik.values.username}
+							value={formik.values.email}
 						/>
 					</div>
 					<div className={styles.login__form_wrapper}>
@@ -105,7 +113,7 @@ const LoginPage: FC = () => {
 								type='checkbox'
 								onChange={formik.handleChange}
 								onBlur={formik.handleBlur}
-								value={formik.values.remember}
+								checked={formik.values.remember}
 							/>
 							<div className={styles.login__form_title}>Remember me</div>
 						</div>

@@ -3,11 +3,10 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev ",
+		"dev": "next dev -p 8080",
 		"build": "next build ",
-		"start": "next start ",
-		"lint": "next lint ",
-		"docker-test": "docker compose up --build --force-recreate"
+		"start": "next start -p 8080 ",
+		"lint": "next lint "
 	},
 	"dependencies": {
 		"@emotion/react": "^11.9.0",

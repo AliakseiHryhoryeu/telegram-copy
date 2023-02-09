@@ -35,7 +35,7 @@ const ContactsPage = () => {
 						</div>
 						<div className={styles.contacts__item_popup}>
 							{/* <DotsIcon /> */}
-							remove
+							Remove
 						</div>
 					</div>
 					<div className={styles.contacts__title}>Contact requests</div>

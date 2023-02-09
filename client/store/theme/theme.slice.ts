@@ -24,8 +24,8 @@ const LocalStorageFolder = 'Theme'
 const initialState: IThemeState = {
 	// theme: Parsed.theme || 'dark',
 	theme: 'light',
-	bgColor: '#f5f7f8',
-	particleColor: '#A850FF',
+	// bgColor: '#f5f7f8',
+	// particleColor: '#A850FF',
 }
 
 export const themeSlice = createSlice({
@@ -35,30 +35,30 @@ export const themeSlice = createSlice({
 		toggleTheme: state => {
 			if (state.theme == 'dark') {
 				state.theme = 'light'
-				state.bgColor = '#f5f7f8'
-				state.particleColor = '#A850FF'
+				// state.bgColor = '#f5f7f8'
+				// state.particleColor = '#A850FF'
 			} else {
 				state.theme = 'dark'
-				state.bgColor = '#18181a'
-				state.particleColor = '#00E0FF'
+				// state.bgColor = '#18181a'
+				// state.particleColor = '#00E0FF'
 			}
 			localStorage.setItem(LocalStorageFolder, JSON.stringify(state))
 
 			// localStorage.setItem(LocalStorageFolder, JSON.stringify(state.theme))
 		},
 		getTheme: (state, action: PayloadAction<{}>) => {
-			let Parsed: IThemeState = JSON.parse(
-				localStorage.getItem(LocalStorageFolder) || '{}'
-			)
-			if (
-				typeof localStorage.getItem(LocalStorageFolder) == undefined ||
-				localStorage.getItem(LocalStorageFolder) == null
-			) {
-				Parsed = { theme: 'dark', bgColor: '#18181a', particleColor: '#00E0FF' }
-			}
-			state.theme = Parsed.theme
-			state.bgColor = Parsed.bgColor
-			state.particleColor = Parsed.particleColor
+			// let Parsed: IThemeState = JSON.parse(
+			// 	localStorage.getItem(LocalStorageFolder) || '{}'
+			// )
+			// if (
+			// 	typeof localStorage.getItem(LocalStorageFolder) == undefined ||
+			// 	localStorage.getItem(LocalStorageFolder) == null
+			// ) {
+			// 	Parsed = { theme: 'dark', bgColor: '#18181a', particleColor: '#00E0FF' }
+			// }
+			// state.theme = Parsed.theme
+			// state.bgColor = Parsed.bgColor
+			// state.particleColor = Parsed.particleColor
 		},
 	},
 })
