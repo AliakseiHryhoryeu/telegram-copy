@@ -1,86 +1,92 @@
-import React, { FC } from 'react'
-// import { useDispatch, useSelector } from 'react-redux'
+import React, { FC, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import Head from 'next/head'
 import { useFormik } from 'formik'
-// import { UserActions } from 'app/store/actions'
 
-// import { RootState } from 'app/store/reducers'
-import { PassResetSchema } from '../components/Auth/PassResetValidation'
+import { PassResetSchema } from '../components/validation/PassResetValidation'
 
-// import facebookIcon from 'assets/img/facebook-icon-signup.svg'
-// import googleIcon from 'assets/img/google-icon-signup.svg'
+import { useTypedSelector } from 'src/hooks/useTypedSelector'
+import { RootState } from '../store'
 
 import styles from '../styles/passreset.module.scss'
-import Link from 'next/link'
 
 const PassResetPage: FC = () => {
-	// const dispatch = useDispatch()
-	// const navigate = useNavigate()
-	// const { isAuth } = useSelector((state: RootState) => {
-	// 	return {
-	// 		isAuth: state.user.isAuth,
-	// 	}
-	// })
-	// if (isAuth === true) {
-	// 	navigate('/main', { replace: true })
-	// }
+	const router = useRouter()
+	const { isAuth } = useTypedSelector((state: RootState) => {
+		return {
+			isAuth: state.user.isAuth,
+		}
+	})
 
 	const formik = useFormik({
 		initialValues: {
-			usernameOrEmail: '',
-			password: '',
-			remember: '',
+			email: '',
 		},
 		validationSchema: PassResetSchema,
 		onSubmit: values => {
-			// dispatch(UserActions.PassReset(values.username, values.password))
-			// UserActions.PassReset(values.usernameOrEmail, values.password)
-			// navigate('/main', { replace: true })
+			// will be send mail to email
 		},
 	})
+	useEffect(() => {
+		if (isAuth === true) {
+			router.push('/')
+		}
+	}, [])
+
 	return (
-		<div className={styles.PassReset}>
-			<div className={styles.PassReset__header}>
-				<a href='/'>good deeds</a>
-			</div>
-			<div className={styles.PassReset__title}>Password Reset</div>
-			<div className={styles.PassReset__subtitle}>
-				Enter your <b>GOOD DEEDS username</b> or the <b> email address</b> that
-				you used to register. We'll send you an email with your username and a
-				link to reset your password.
-			</div>
-			<div className={styles.PassReset__wrapper}>
-				<form
-					className={styles.PassReset__form}
-					onSubmit={formik.handleSubmit}
-					noValidate
-				>
-					<div className={styles.PassReset__form_wrapper}>
-						<div className={styles.PassReset__form_title}>
-							Email address or username
-						</div>
-						<input
-							className={styles.PassReset__form_input}
-							placeholder='Email address or username.'
-							name='text'
-							type='text'
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							value={formik.values.usernameOrEmail}
-						/>
-					</div>
-					<button
-						type='submit'
-						className={styles.PassReset__form_button_PassReset}
+		<>
+			<Head>
+				<title>Good Deeds - Password Reset</title>
+			</Head>
+			<div className={styles.passReset}>
+				<div className={styles.passReset__header}>
+					<a href='/'>good deeds</a>
+				</div>
+				<div className={styles.passReset__title}>Password Reset</div>
+				<div className={styles.passReset__subtitle}>
+					Enter your <b>GOOD DEEDS username</b> or the <b> email address</b>
+					that you used to register. We'll send you an email with your username
+					and a link to reset your password.
+				</div>
+				<div className={styles.passReset__wrapper}>
+					<form
+						className={styles.passReset__form}
+						onSubmit={formik.handleSubmit}
+						noValidate
 					>
-						Send
-					</button>
-					<div className={styles.PassReset__help__title}>
-						If you still need help, contact
-						<a href='/support'>GOOD DEEDS Support</a>.
-					</div>
-				</form>
+						<div className={styles.passReset__form_wrapper}>
+							<div className={styles.passReset__form_title}>
+								Email address or username
+							</div>
+							{formik?.errors && (
+								<div className={styles.passReset__form_title_error}>
+									{formik?.errors.email}
+								</div>
+							)}
+							<input
+								className={styles.passReset__form_input}
+								placeholder='Email address or username.'
+								name='email'
+								type='text'
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								value={formik.values.email}
+							/>
+						</div>
+						<button
+							type='submit'
+							className={styles.passReset__form_button_passReset}
+						>
+							Send
+						</button>
+						<div className={styles.passReset__help__title}>
+							If you still need help, contact
+							<a href='/support'>GOOD DEEDS Support</a>.
+						</div>
+					</form>
+				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 

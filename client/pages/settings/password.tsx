@@ -1,61 +1,108 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useFormik } from 'formik'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
-// import Link from 'next/link'
-// import { Projects } from 'src/components'
-import styles from '../../styles/settings.module.scss'
+
+import { useChangePasswordMutation } from 'src/store/user/user.api'
 import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { RootState } from 'src/store'
+
+import { changePasswordSchema } from 'src/components/validation/ChangePassValidation'
 import Header from 'src/components/Settings/Header'
-import { MessageBtnIcon } from 'src/components/svg/MessageBtnIcon'
-import { ArrowRight } from 'src/components/svg/ArrowRight'
-import { Logout } from 'src/components/svg/Logout'
+
+import styles from 'src/styles/settings.module.scss'
 
 const SettingsPage = () => {
-	const { theme } = useTypedSelector((state: RootState) => {
+	const { theme, isAuth } = useTypedSelector((state: RootState) => {
 		return {
 			theme: state.theme.theme,
+			isAuth: state.user.isAuth,
 		}
 	})
-	const [messageInput, updateMessageInput] = useState('')
+	const router = useRouter()
 
+	const [changePasswordRequest, { isLoading: isLoading }] =
+		useChangePasswordMutation()
+
+	const formik = useFormik({
+		initialValues: {
+			currentPassword: '',
+			newPassword: '',
+			repeatNewPassword: '',
+		},
+		validationSchema: changePasswordSchema,
+		onSubmit: values => {
+			changePasswordRequest({
+				password: values.currentPassword,
+				newPassword: values.newPassword,
+			})
+		},
+	})
+	useEffect(() => {
+		if (isAuth === false) {
+			router.push('/login')
+		}
+	}, [])
 	return (
 		<>
 			<Head>
-				<title>Settings info</title>
+				<title>Change password</title>
 			</Head>
 			<div className={`${styles[`settings_${theme}`]} ${styles.settings}`}>
 				<Header route='/settings' />
 
 				<div className={styles.settings__container}>
 					<div className={styles.settings__title}>Edit Password</div>
-					<form className={styles.settings__change__wrapper}>
-						<div className={styles.settings__subtitle}>Current password</div>
-						<input
-							value={messageInput}
-							onChange={e => {
-								updateMessageInput(e.target.value)
-							}}
-							type='text'
-						/>
-						<div className={styles.settings__subtitle}>New password</div>{' '}
-						<input
-							value={messageInput}
-							onChange={e => {
-								updateMessageInput(e.target.value)
-							}}
-							type='text'
-						/>
-						<div className={styles.settings__subtitle}>New password</div>{' '}
-						<input
-							value={messageInput}
-							onChange={e => {
-								updateMessageInput(e.target.value)
-							}}
-							type='text'
-						/>
-						<button type='submit' className={styles.settings__right}>
-							Change username
-						</button>
+					<form className={styles.settings__change}>
+						<div className={styles.settings__change__wrapper}>
+							<div className={styles.settings__subtitle}>Current password.</div>
+							{formik?.errors && (
+								<div className={styles.settings__subtitle_error}>
+									{formik?.errors.currentPassword}
+								</div>
+							)}
+							<input
+								type='text'
+								name='currentPassword'
+								placeholder='Current password.'
+								value={formik.values.currentPassword}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+							/>
+							<div className={styles.settings__subtitle}>New password.</div>
+							{formik?.errors && (
+								<div className={styles.settings__subtitle_error}>
+									{formik?.errors.newPassword}
+								</div>
+							)}
+							<input
+								type='password'
+								name='newPassword'
+								placeholder='New password.'
+								value={formik.values.newPassword}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+							/>
+							<div className={styles.settings__subtitle}>
+								Repeat your new password.
+							</div>
+							{formik?.errors && (
+								<div className={styles.settings__subtitle_error}>
+									{formik?.errors.repeatNewPassword}
+								</div>
+							)}
+							<input
+								type='password'
+								name='repeatNewPassword'
+								placeholder='Repeat your new password.'
+								value={formik.values.repeatNewPassword}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+							/>
+							<button type='submit' className={styles.settings__right}>
+								Change password
+							</button>
+						</div>
 					</form>
 				</div>
 			</div>

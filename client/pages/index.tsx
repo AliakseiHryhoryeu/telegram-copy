@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Head from 'next/head'
 // import Link from 'next/link'
 import { AddTaskBtn, TaskInfo } from 'src/components/Task/'

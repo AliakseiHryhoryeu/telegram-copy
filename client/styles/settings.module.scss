@@ -25,9 +25,10 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		padding-top: 8px;
+		padding: 10px;
 		font-size: 20px;
 		cursor: pointer;
+
 		&:hover {
 			background: rgb(49, 48, 48);
 		}
@@ -49,7 +50,6 @@
 		width: 100%;
 		padding: 15px;
 		border-bottom: 1px solid #fff;
-		margin-bottom: 15px;
 	}
 	&__left {
 		display: flex;
@@ -72,36 +72,48 @@
 
 	&__logout {
 		padding-top: 15px;
-		margin-top: 15px;
 		border-top: 1px solid #fff;
 		padding-left: 15px;
 		padding-bottom: 10px;
 	}
 
-	&__change__wrapper {
+	&__change {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		input {
-			width: 90%;
-			margin: 10px;
-			font-size: 24px;
-		}
-		button {
-			margin-top: 20px;
-			background-color: rgb(41, 141, 255);
-			cursor: pointer;
-			border: 2px solid rgba(255, 255, 255, 0.2);
-			color: #fff;
-			padding: 10px 40px;
-			font-size: 24px;
+
+		&__wrapper {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			justify-content: flex-start;
+			width: 80%;
+			input {
+				width: 100%;
+				font-size: 24px;
+				margin-bottom: 10px;
+			}
+			button {
+				justify-self: center;
+				align-self: center;
+				margin-top: 20px;
+				background-color: rgb(41, 141, 255);
+				cursor: pointer;
+				border: 2px solid rgba(255, 255, 255, 0.2);
+				color: #fff;
+				padding: 10px 40px;
+				font-size: 24px;
+			}
 		}
 	}
 	&__subtitle {
-		text-align: center;
+		text-align: start;
 		width: 100%;
 		font-size: 24px;
+		&_error {
+			color: red;
+		}
 	}
 }

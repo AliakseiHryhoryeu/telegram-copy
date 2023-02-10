@@ -12,7 +12,7 @@ const initialState: IUserState = {
 		username: '',
 	},
 	token: '',
-	isAuth: false,
+	isAuth: true,
 }
 
 export const userSlice = createSlice({
@@ -40,11 +40,12 @@ export const userSlice = createSlice({
 		builder.addMatcher(
 			userApi.endpoints.login.matchFulfilled,
 			(state, { payload }) => {
-				state.token = payload.user.token
-				state.activeUser.email = payload.user.email
-				state.activeUser.id = payload.user.userId
-				state.activeUser.username = payload.user.username
-				localStorage.setItem('token', payload.user.token)
+				console.log(payload)
+				// state.token = payload.user.token
+				// state.activeUser.email = payload.user.email
+				// state.activeUser.id = payload.user.userId
+				// state.activeUser.username = payload.user.username
+				// localStorage.setItem('token', payload.user.token)
 				state.isAuth = true
 			}
 		),

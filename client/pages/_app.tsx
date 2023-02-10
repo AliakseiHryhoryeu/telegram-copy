@@ -10,6 +10,8 @@ import 'src/styles/globals.scss'
 // import { useEffect } from 'react'
 // import { useActions } from 'src/hooks/useActions'
 function MyApp({ Component, pageProps }: AppProps) {
+	// useEffect(() => {}, [])
+
 	return (
 		<Provider store={store}>
 			<Layout>

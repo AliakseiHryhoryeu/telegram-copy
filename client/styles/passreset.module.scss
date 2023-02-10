@@ -1,9 +1,9 @@
-.PassReset {
+.passReset {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	min-height: 100vh;
-
+	overflow-x: hidden;
 	background-image: url('/static/auth-bg.jpg');
 	background-color: transparent;
 	background-repeat: no-repeat;
@@ -15,7 +15,7 @@
 		margin-top: 46px;
 		display: flex;
 		flex-direction: column;
-		justify-content: end;
+		justify-content: flex-end;
 		align-items: flex-end;
 		a {
 			color: #fff;
@@ -55,6 +55,7 @@
 		}
 	}
 	&__wrapper {
+		width: 100%;
 		max-width: 450px;
 	}
 
@@ -88,6 +89,9 @@
 				cursor: pointer;
 				padding: 0 4px;
 			}
+			&_error {
+				color: red;
+			}
 		}
 		&_input {
 			min-width: 446px;
@@ -115,7 +119,7 @@
 			}
 		}
 
-		&_button_PassReset {
+		&_button_passReset {
 			align-self: center;
 			background: linear-gradient(135.29deg, #ebc07d -1.97%, #ce7e00 100.91%);
 

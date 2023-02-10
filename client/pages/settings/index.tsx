@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 // import Link from 'next/link'
 // import { Projects } from 'src/components'
@@ -12,13 +12,19 @@ import { Logout } from 'src/components/svg/Logout'
 import { useRouter } from 'next/router'
 
 const SettingsPage = () => {
-	const { theme } = useTypedSelector((state: RootState) => {
+	const { theme, isAuth } = useTypedSelector((state: RootState) => {
 		return {
 			theme: state.theme.theme,
+			isAuth: state.user.isAuth,
 		}
 	})
-	const [messageInput, updateMessageInput] = useState('')
 	const router = useRouter()
+
+	useEffect(() => {
+		if (isAuth === false) {
+			router.push('/login')
+		}
+	}, [])
 	return (
 		<>
 			<Head>
@@ -29,13 +35,11 @@ const SettingsPage = () => {
 
 				<div className={styles.settings__container}>
 					<div className={styles.settings__title}>Account information</div>
-					<div className={styles.settings__wrapper}>
-						<div
-							className={styles.settings__left}
-							onClick={() => router.push('/settings/username')}
-						>
-							Username
-						</div>
+					<div
+						className={styles.settings__wrapper}
+						onClick={() => router.push('/settings/username')}
+					>
+						<div className={styles.settings__left}>Username</div>
 						<div className={styles.settings__right}>
 							<p>username</p>
 							<ArrowRight />

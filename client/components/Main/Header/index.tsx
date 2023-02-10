@@ -12,10 +12,16 @@ export const Header: FC = () => {
 			theme: state.theme.theme,
 		}
 	})
-	const [searchValue, setSearchValue] = useState('')
+	const [inputValue, setInputhValue] = useState('')
 
 	const allActions = useActions()
-
+	const waitRequest = (nowInputValue: string) => {
+		setTimeout(() => {
+			if (nowInputValue == inputValue) {
+				// filter messages
+			}
+		}, 1000)
+	}
 	return (
 		<div className={`${styles[`header_${theme}`]} ${styles.header}`}>
 			<div className={styles.header__wrapper}>
@@ -27,8 +33,8 @@ export const Header: FC = () => {
 				</div>
 				<input
 					className={styles.header__search}
-					value={searchValue}
-					onChange={e => setSearchValue(e.target.value)}
+					value={inputValue}
+					onChange={e => setInputhValue(e.target.value)}
 					type='text'
 					placeholder='Search...'
 				/>
