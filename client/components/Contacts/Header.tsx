@@ -17,9 +17,15 @@ export const Header: FC<HeaderProps> = ({ route }) => {
 			theme: state.theme.theme,
 		}
 	})
-	const [searchValue, setSearchValue] = useState('')
+	const [inputValue, setInputhValue] = useState('')
 	const router = useRouter()
-
+	const waitRequest = (nowInputValue: string) => {
+		setTimeout(() => {
+			if (nowInputValue == inputValue) {
+				// request to server
+			}
+		}, 1000)
+	}
 	const allActions = useActions()
 
 	return (
@@ -34,7 +40,10 @@ export const Header: FC<HeaderProps> = ({ route }) => {
 				<input
 					className={styles.header__search}
 					value={searchValue}
-					onChange={e => setSearchValue(e.target.value)}
+					onChange={e => {
+						setSearchValue(e.target.value)
+						waitRequest(e.target.value)
+					}}
 					type='text'
 					placeholder='Search...'
 				/>
