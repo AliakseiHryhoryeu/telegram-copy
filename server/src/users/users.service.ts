@@ -12,6 +12,7 @@ import * as _ from 'lodash'
 import { RequestContactDto } from './dto/contacts/request-contact'
 import { HeaderDto } from 'auth/dto/header.dto'
 import { default as config } from '../config'
+import { AcceptContactDto } from './dto/contacts/accept-contact'
 
 const saltRounds = 10
 const jwtSecretKey = config.jwt.secretOrKey
@@ -25,6 +26,9 @@ export class UsersService {
 
 	async findByEmail(email: string): Promise<User> {
 		return await this.userModel.findOne({ email: email }).exec()
+	}
+	async findByUsername(username: string): Promise<User> {
+		return await this.userModel.findOne({ username: username }).exec()
 	}
 
 	async createNewUser(newUser: CreateUserDto): Promise<User> {
@@ -56,25 +60,206 @@ export class UsersService {
 		contactDto: RequestContactDto,
 		headers: HeaderDto
 	): Promise<boolean> {
-		// проверка jwt пользователя -> отправка запроса
+		// Verify user
 		const token = headers.authorization.split(' ')[1]
 		if (!token) {
-			throw new HttpException('AUTHORIZED ERROR', HttpStatus.UNAUTHORIZED)
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
 		}
-		console.log(token)
-		// const decoded = jwt.verivy(token, jwtSecretKey)
 		const decoded = jwt.verify(token, jwtSecretKey)
-		console.log(decoded)
+		if (decoded.email != contactDto.email) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
 
-		// req.user = decoded
-		// const userId = req.user.id
-		// var userFromDb = await this.userModel.findOne({ email: email })
-		// if (!userFromDb)
-		// 	throw new HttpException('LOGIN.USER_NOT_FOUND', HttpStatus.NOT_FOUND)
+		const user = await this.findByEmail(decoded.email)
+		const user2 = await this.findByUsername(contactDto.contactUsername)
+		if (user2 == null) {
+			throw new HttpException(
+				'INCORRENT USERNAME REQUEST',
+				HttpStatus.BAD_REQUEST
+			)
+		}
 
-		// userFromDb.password = await bcrypt.hash(newPassword, saltRounds)
+		// already request was send
+		if (user.contacts.pending.find(item => item == user2.username) != undefined)
+			throw new HttpException('User alredy send request', HttpStatus.OK)
+		// already in friends
+		if (user.contacts.added.find(item => item == user2.username) != undefined)
+			throw new HttpException('User alredy send request', HttpStatus.OK)
 
-		// await userFromDb.save()
+		user.contacts.pending.push(user2.username)
+		user2.contacts.requests.push(user.username)
+		await user.save()
+		await user2.save()
+
+		return true
+	}
+
+	async contactAccept(
+		contactDto: AcceptContactDto,
+		headers: HeaderDto
+	): Promise<boolean> {
+		// Verify user
+		const token = headers.authorization.split(' ')[1]
+		if (!token) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+		const decoded = jwt.verify(token, jwtSecretKey)
+		if (decoded.email != contactDto.email) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+
+		const user = await this.findByEmail(decoded.email)
+		const user2 = await this.findByUsername(contactDto.contactUsername)
+		if (user2 == null) {
+			throw new HttpException(
+				'INCORRENT USERNAME REQUEST',
+				HttpStatus.BAD_REQUEST
+			)
+		}
+		if (
+			user.contacts.requests.find(item => item == user2.username) == undefined
+		)
+			throw new HttpException('USER DONT SEND FRIEND REQUEST', HttpStatus.OK)
+
+		// user1 delete user2 from pending and request lists
+		const index11 = user.contacts.pending.indexOf(user2.username)
+		if (index11 !== -1) {
+			user.contacts.pending.splice(index11, 1)
+		}
+		const index12 = user.contacts.pending.indexOf(user2.username)
+		if (index12 !== -1) {
+			user.contacts.requests.splice(index12, 1)
+		}
+
+		// if alredy in friends not will be added again
+		if (user.contacts.added.find(item => item == user2.username) == undefined)
+			user.contacts.added.push(user2.username)
+
+		// user2 delete user1 from pending and request lists
+		const index21 = user2.contacts.pending.indexOf(user.username)
+		if (index21 !== -1) {
+			user2.contacts.pending.splice(index21, 1)
+		}
+		const index22 = user.contacts.pending.indexOf(user.username)
+		if (index22 !== -1) {
+			user2.contacts.requests.splice(index22, 1)
+		}
+
+		// if alredy in friends not will be added again
+		if (user2.contacts.added.find(item => item == user.username) == undefined)
+			user2.contacts.added.push(user.username)
+
+		await user.save()
+		await user2.save()
+
+		return true
+	}
+
+	async contactReject(
+		contactDto: AcceptContactDto,
+		headers: HeaderDto
+	): Promise<boolean> {
+		// Verify user
+		const token = headers.authorization.split(' ')[1]
+		if (!token) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+		const decoded = jwt.verify(token, jwtSecretKey)
+		if (decoded.email != contactDto.email) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+
+		const user = await this.findByEmail(decoded.email)
+		const user2 = await this.findByUsername(contactDto.contactUsername)
+		if (user2 == null) {
+			throw new HttpException(
+				'INCORRENT USERNAME REQUEST',
+				HttpStatus.BAD_REQUEST
+			)
+		}
+
+		const index11 = user.contacts.pending.indexOf(user2.username)
+		if (index11 !== -1) {
+			user.contacts.pending.splice(index11, 1)
+		}
+		const index12 = user.contacts.pending.indexOf(user2.username)
+		if (index12 !== -1) {
+			user.contacts.requests.splice(index12, 1)
+		}
+
+		const index21 = user2.contacts.pending.indexOf(user.username)
+		if (index21 !== -1) {
+			user2.contacts.pending.splice(index21, 1)
+		}
+		const index22 = user.contacts.pending.indexOf(user.username)
+		if (index22 !== -1) {
+			user2.contacts.requests.splice(index22, 1)
+		}
+		await user.save()
+		await user2.save()
+
+		return true
+	}
+
+	async contactDelete(
+		contactDto: AcceptContactDto,
+		headers: HeaderDto
+	): Promise<boolean> {
+		// Verify user
+		const token = headers.authorization.split(' ')[1]
+		if (!token) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+		const decoded = jwt.verify(token, jwtSecretKey)
+		if (decoded.email != contactDto.email) {
+			throw new HttpException(
+				'CONTACTS.AUTHORIZED ERROR',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+
+		const user = await this.findByEmail(decoded.email)
+		const user2 = await this.findByUsername(contactDto.contactUsername)
+		if (user2 == null) {
+			throw new HttpException(
+				'INCORRENT USERNAME REQUEST',
+				HttpStatus.BAD_REQUEST
+			)
+		}
+
+		const index11 = user.contacts.added.indexOf(user2.username)
+		if (index11 !== -1) {
+			user.contacts.added.splice(index11, 1)
+		}
+		const index21 = user2.contacts.added.indexOf(user.username)
+		if (index21 !== -1) {
+			user2.contacts.added.splice(index11, 1)
+		}
+
+		await user.save()
+		await user2.save()
+
 		return true
 	}
 

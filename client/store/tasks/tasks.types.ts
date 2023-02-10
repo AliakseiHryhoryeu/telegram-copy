@@ -4,7 +4,6 @@ export interface ITask {
 	text: string
 	username: string
 	checked: boolean
-	tasksId: string[]
 }
 export interface ITasksState {
 	Tasks: ITask[]

@@ -21,6 +21,11 @@ export class UserDto {
 	readonly email: string
 	// readonly phone: string;
 	settings: SettingsDto
+	contacts: {
+		pending: string[] // req to user
+		requests: string[] // user requests
+		added: string[] // friends
+	}
 	// photos: {
 	//   profilePic: PhotoDto;
 	//   gallery: PhotoDto[];

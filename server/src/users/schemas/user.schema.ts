@@ -19,6 +19,10 @@ export const UserSchema = new mongoose.Schema({
 		},
 	},
 	settings: {},
-	contacts: [],
+	contacts: {
+		pending: [], // req to user
+		requests: [], // user requests
+		added: [], // friends
+	},
 	tasks: [],
 })

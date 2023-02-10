@@ -18,7 +18,11 @@ export interface User extends Document {
 		}
 	}
 	settings: {}
-	contacts: string[]
+	contacts: {
+		pending: string[] // req to user
+		requests: string[] // user requests
+		added: string[] // friends
+	}
 	tasks: string[]
 	// photos: {
 	//   profilePic: Photo;

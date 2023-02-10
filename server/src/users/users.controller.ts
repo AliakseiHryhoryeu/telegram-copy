@@ -47,7 +47,7 @@ export class UsersController {
 	}
 
 	@Post('/contacts/request')
-	// @UseGuards(RolesGuard)
+	@UseGuards(RolesGuard)
 	@Roles('User')
 	async requestContact(
 		@Body() contactDto: RequestContactDto,
@@ -55,45 +55,56 @@ export class UsersController {
 	): Promise<IResponse> {
 		try {
 			var user = await this.usersService.contactRequest(contactDto, headers)
-			return new ResponseSuccess('PROFILE.UPDATE_SUCCESS', new UserDto(user))
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
 		} catch (error) {
-			return new ResponseError('PROFILE.UPDATE_ERROR', error)
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
 	}
 
-	// @Post('user/contacts/accept')
-	// @UseGuards(RolesGuard)
-	// @Roles('User')
-	// async acceptContact(
-	// 	@Body() contactDto: AcceptContactDto
-	// ): Promise<IResponse> {
-	// 	try {
-	// 		var user = await this.usersService.updateProfile(contactDto)
-	// 		return new ResponseSuccess('PROFILE.UPDATE_SUCCESS', new UserDto(user))
-	// 	} catch (error) {
-	// 		return new ResponseError('PROFILE.UPDATE_ERROR', error)
-	// 	}
-	// }
+	@Post('/contacts/accept')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async acceptContact(
+		@Body() contactDto: RequestContactDto,
+		@Headers() headers
+	): Promise<IResponse> {
+		try {
+			var user = await this.usersService.contactAccept(contactDto, headers)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
 
-	// @Post('user/contacts/reject')
-	// @UseGuards(RolesGuard)
-	// @Roles('User')
-	// async rejectContact(
-	// 	@Body() contactDto: RejectContactDto
-	// ): Promise<IResponse> {
-	// 	try {
-	// 		var user = await this.usersService.updateProfile(contactDto)
-	// 		return new ResponseSuccess('PROFILE.UPDATE_SUCCESS', new UserDto(user))
-	// 	} catch (error) {
-	// 		return new ResponseError('PROFILE.UPDATE_ERROR', error)
-	// 	}
-	// }
+	@Post('/contacts/reject')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async rejectContact(
+		@Body() contactDto: RequestContactDto,
+		@Headers() headers
+	): Promise<IResponse> {
+		try {
+			var user = await this.usersService.contactReject(contactDto, headers)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
 
-	//
-
-	//
-
-	//
+	@Post('/contacts/delete')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async deleteContact(
+		@Body() contactDto: RequestContactDto,
+		@Headers() headers
+	): Promise<IResponse> {
+		try {
+			var user = await this.usersService.contactDelete(contactDto, headers)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
 
 	// @Post('profile/update')
 	// @UseGuards(RolesGuard)

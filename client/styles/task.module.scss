@@ -8,11 +8,16 @@
 	overflow-x: hidden;
 	min-height: 100vh;
 	&__description {
-		width: 80%;
-		margin: 10px;
-		border: 2px solid rgba(255, 255, 255, 0.6);
-		background-color: rgb(37, 38, 44);
-		color: #fff;
+		&__wrapper {
+			border: 2px solid rgba(255, 255, 255, 0.6);
+			background-color: rgb(37, 38, 44);
+			color: #fff;
+			width: 80%;
+			margin: 10px;
+		}
+		&_title {
+			color: rgb(102, 255, 115);
+		}
 	}
 	&__comment {
 		width: 80%;
@@ -50,13 +55,17 @@
 			justify-content: space-between;
 			width: 100%;
 			background: var(--Dark-bg-primary);
+			padding-bottom: 5px;
+			padding-top: 5px;
 			textarea {
 				margin: 10px;
+				font-size: 20px;
 			}
 			svg {
 				background-color: rgb(79, 79, 80);
 				padding-left: 10px;
 				margin-right: 10px;
+				padding: 10px 5px;
 				cursor: pointer;
 				path {
 					fill: rgb(127, 193, 247);

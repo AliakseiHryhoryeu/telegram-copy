@@ -25,9 +25,12 @@ const TaskPage = () => {
 				<Header />
 
 				<div className={styles.task__container}>
-					<div className={styles.task__description}>
-						xjasgoghosahoga sgsakn sgaas jiosgajipsagjipjsgapjopsag sagjsaogm
-						skoamg asghska gasplg as g as g ags g as gk
+					<div className={styles.task__description__wrapper}>
+						<div className={styles.task__description_title}>title</div>
+						<div className={styles.task__description}>
+							xjasgoghosahoga sgsakn sgaas jiosgajipsagjipjsgapjopsag sagjsaogm
+							skoamg asghska gasplg as g as g ags g as gk
+						</div>
 					</div>
 					<div className={styles.task__comment}>
 						<div className={styles.task__comment__username}>user1</div>
