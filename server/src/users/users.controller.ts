@@ -3,15 +3,13 @@ import {
 	Get,
 	Post,
 	Body,
-	HttpCode,
-	HttpStatus,
 	UseGuards,
 	UseInterceptors,
 	Param,
 	Headers,
-	Header,
 } from '@nestjs/common'
-import { UserDto } from './dto/user.dto'
+import { AuthGuard } from '@nestjs/passport'
+
 import { UsersService } from './users.service'
 import { IResponse } from '../common/interfaces/response.interface'
 import { ResponseSuccess, ResponseError } from '../common/dto/response.dto'
@@ -19,11 +17,15 @@ import { RolesGuard } from '../common/guards/roles.guard'
 import { Roles } from '../common/decorators/roles.decorator'
 import { LoggingInterceptor } from '../common/interceptors/logging.interceptor'
 import { TransformInterceptor } from '../common/interceptors/transform.interceptor'
-import { AuthGuard } from '@nestjs/passport'
-import { AcceptContactDto } from './dto/contacts/accept-contact'
+import { HeaderDto } from 'auth/dto/header.dto'
+import { UserDto } from './dto/user.dto'
+import { ChangePasswordDto } from './dto/change-password'
+import { ChangeUsernameDto } from './dto/change-username'
+import { ChangeEmailDto } from './dto/change-email'
 import { RejectContactDto } from './dto/contacts/reject-contact'
 import { RequestContactDto } from './dto/contacts/request-contact'
-// import { UpdateGalleryDto } from './dto/update-gallery.dto';
+import { AcceptContactDto } from './dto/contacts/accept-contact'
+import { DeleteContactDto } from './dto/contacts/delete-contact'
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
@@ -31,15 +33,54 @@ import { RequestContactDto } from './dto/contacts/request-contact'
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Get('user/:email')
+	@Post('/changePassword')
 	@UseGuards(RolesGuard)
 	@Roles('User')
-	async findById(@Param() params): Promise<IResponse> {
+	async changePassword(
+		@Body() changePasswordDto: ChangePasswordDto,
+		@Headers() headers: HeaderDto
+	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.findByEmail(params.email)
-			return new ResponseSuccess('COMMON.SUCCESS', new UserDto(user))
+			var user = await this.usersService.changePassword(
+				changePasswordDto,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
 		} catch (error) {
-			return new ResponseError('COMMON.ERROR.GENERIC_ERROR', error)
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
+
+	@Post('/changeUsername')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async changeUsername(
+		@Body() changeUsernameDto: ChangeUsernameDto,
+		@Headers() headers: HeaderDto
+	): Promise<IResponse> {
+		try {
+			const user = await this.usersService.changeUsername(
+				changeUsernameDto,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
+
+	@Post('/changeEmail')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async changeEmail(
+		@Body() changeEmailDto: ChangeEmailDto,
+		@Headers() headers: HeaderDto
+	): Promise<IResponse> {
+		try {
+			var user = await this.usersService.changeEmail(changeEmailDto, headers)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
 	}
 
@@ -47,11 +88,11 @@ export class UsersController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async requestContact(
-		@Body() contactDto: RequestContactDto,
-		@Headers() headers
+		@Body() requestContact: RequestContactDto,
+		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactRequest(contactDto, headers)
+			var user = await this.usersService.contactRequest(requestContact, headers)
 			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
@@ -62,11 +103,11 @@ export class UsersController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async acceptContact(
-		@Body() contactDto: RequestContactDto,
-		@Headers() headers
+		@Body() acceptContact: AcceptContactDto,
+		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactAccept(contactDto, headers)
+			var user = await this.usersService.contactAccept(acceptContact, headers)
 			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
@@ -77,11 +118,11 @@ export class UsersController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async rejectContact(
-		@Body() contactDto: RequestContactDto,
-		@Headers() headers
+		@Body() rejectContact: RejectContactDto,
+		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactReject(contactDto, headers)
+			var user = await this.usersService.contactReject(rejectContact, headers)
 			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
@@ -92,38 +133,14 @@ export class UsersController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async deleteContact(
-		@Body() contactDto: RequestContactDto,
-		@Headers() headers
+		@Body() deleteContact: DeleteContactDto,
+		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactDelete(contactDto, headers)
+			var user = await this.usersService.contactDelete(deleteContact, headers)
 			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
 	}
-
-	// @Post('profile/update')
-	// @UseGuards(RolesGuard)
-	// @Roles('User')
-	// async updateProfile(@Body() profileDto: ProfileDto): Promise<IResponse> {
-	// 	try {
-	// 		var user = await this.usersService.updateProfile(profileDto)
-	// 		return new ResponseSuccess('PROFILE.UPDATE_SUCCESS', new UserDto(user))
-	// 	} catch (error) {
-	// 		return new ResponseError('PROFILE.UPDATE_ERROR', error)
-	// 	}
-	// }
-
-	// @Post('settings/update')
-	// @UseGuards(RolesGuard)
-	// @Roles('User')
-	// async updateSettings(@Body() settingsDto: SettingsDto): Promise<IResponse> {
-	// 	try {
-	// 		var user = await this.usersService.updateSettings(settingsDto)
-	// 		return new ResponseSuccess('SETTINGS.UPDATE_SUCCESS', new UserDto(user))
-	// 	} catch (error) {
-	// 		return new ResponseError('SETTINGS.UPDATE_ERROR', error)
-	// 	}
-	// }
 }

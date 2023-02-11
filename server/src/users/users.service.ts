@@ -1,22 +1,34 @@
+import { Injectable, HttpStatus, HttpException } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+
 import { Model } from 'mongoose'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { User } from './interfaces/user.interface'
-import { InjectModel } from '@nestjs/mongoose'
-// import { UpdateGalleryDto } from './dto/update-gallery.dto'
 import * as _ from 'lodash'
-import { RequestContactDto } from './dto/contacts/request-contact'
+
+import { JWTService } from '../auth/jwt.service'
+import { User } from './interfaces/user.interface'
 import { HeaderDto } from 'auth/dto/header.dto'
 import { default as config } from '../config'
+import { CreateUserDto } from './dto/create-user.dto'
+import { ChangeUsernameDto } from './dto/change-username'
+import { UserUpdateDto } from './dto/update-user.dto'
+import { UserDto } from './dto/user.dto'
+import { ChangeEmailDto } from './dto/change-email'
+import { ChangePasswordDto } from './dto/change-password'
 import { AcceptContactDto } from './dto/contacts/accept-contact'
+import { RejectContactDto } from './dto/contacts/reject-contact'
+import { RequestContactDto } from './dto/contacts/request-contact'
 
 const saltRounds = 10
 const jwtSecretKey = config.jwt.secretOrKey
+
 @Injectable()
 export class UsersService {
-	constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+	constructor(
+		@InjectModel('User') private readonly userModel: Model<User>,
+		private readonly jwtService: JWTService
+	) {}
 
 	async findAll(): Promise<User[]> {
 		return await this.userModel.find().exec()
@@ -61,44 +73,162 @@ export class UsersService {
 		}
 	}
 
+	async changeUsername(
+		changeUsernameDto: ChangeUsernameDto,
+		headers: HeaderDto
+	): Promise<UserUpdateDto> {
+		// Verify user
+		const token = headers.authorization.split(' ')[1]
+		if (!token) {
+			throw new HttpException('USER.AUTHORIZED_ERROR', HttpStatus.UNAUTHORIZED)
+		}
+		const decoded = jwt.verify(token, jwtSecretKey)
+
+		const userFromDb = await this.findByEmail(decoded.email)
+		const isValidPass = await bcrypt.compare(
+			changeUsernameDto.password,
+			userFromDb.password
+		)
+		const isHaveUser = await this.findByUsername(changeUsernameDto.newUsername)
+		if (isHaveUser) {
+			throw new HttpException(
+				'USER.USERNAME_ALREDY_EXSIST',
+				HttpStatus.FORBIDDEN
+			)
+		}
+		if (isValidPass) {
+			var accessToken = await this.jwtService.createToken(
+				userFromDb.email,
+				userFromDb.roles
+			)
+		} else {
+			throw new HttpException('LOGIN.ERROR', HttpStatus.UNAUTHORIZED)
+		}
+
+		userFromDb.username = changeUsernameDto.newUsername
+		await userFromDb.save()
+		return { token: accessToken, user: new UserDto(userFromDb) }
+	}
+
+	async changeEmail(
+		changeEmailDto: ChangeEmailDto,
+		headers: HeaderDto
+	): Promise<UserUpdateDto> {
+		// Verify user
+		const token = headers.authorization.split(' ')[1]
+		if (!token) {
+			throw new HttpException('USER.AUTHORIZED_ERROR', HttpStatus.UNAUTHORIZED)
+		}
+		const decoded = jwt.verify(token, jwtSecretKey)
+
+		const userFromDb = await this.findByEmail(decoded.email)
+		const isValidPass = await bcrypt.compare(
+			changeEmailDto.password,
+			userFromDb.password
+		)
+		const isHaveUser = await this.findByEmail(changeEmailDto.newEmail)
+		if (isHaveUser) {
+			throw new HttpException('USER.EMAIL_ALREDY_EXSIST', HttpStatus.FORBIDDEN)
+		}
+		if (isValidPass) {
+			var accessToken = await this.jwtService.createToken(
+				userFromDb.email,
+				userFromDb.roles
+			)
+		} else {
+			throw new HttpException(
+				'USER.ERROR_CHANGE_EMAIL',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+
+		userFromDb.email = changeEmailDto.newEmail
+		await userFromDb.save()
+		return { token: accessToken, user: new UserDto(userFromDb) }
+	}
+
+	async changePassword(
+		changePasswordDto: ChangePasswordDto,
+		headers: HeaderDto
+	): Promise<UserUpdateDto> {
+		// Verify user
+		const token = headers.authorization.split(' ')[1]
+		if (!token) {
+			throw new HttpException('USER.AUTHORIZED_ERROR', HttpStatus.UNAUTHORIZED)
+		}
+		const decoded = jwt.verify(token, jwtSecretKey)
+
+		const userFromDb = await this.findByEmail(decoded.email)
+		const isValidPass = await bcrypt.compare(
+			changePasswordDto.currentPassword,
+			userFromDb.password
+		)
+
+		if (isValidPass) {
+			var accessToken = await this.jwtService.createToken(
+				userFromDb.email,
+				userFromDb.roles
+			)
+		} else {
+			throw new HttpException(
+				'USER.ERROR_CHANGE_EMAIL',
+				HttpStatus.UNAUTHORIZED
+			)
+		}
+		userFromDb.password = await bcrypt.hash(
+			changePasswordDto.newPassword,
+			saltRounds
+		)
+
+		userFromDb.password = changePasswordDto.newPassword
+		await userFromDb.save()
+		return { token: accessToken, user: new UserDto(userFromDb) }
+	}
+
 	async contactRequest(
-		contactDto: RequestContactDto,
+		requestContact: RequestContactDto,
 		headers: HeaderDto
 	): Promise<boolean> {
 		// Verify user
 		const token = headers.authorization.split(' ')[1]
 		if (!token) {
 			throw new HttpException(
-				'CONTACTS.AUTHORIZED ERROR',
+				'USER.CONTACTS_AUTHORIZED_ERROR',
 				HttpStatus.UNAUTHORIZED
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != contactDto.email) {
+		if (decoded.email != requestContact.email) {
 			throw new HttpException(
-				'CONTACTS.AUTHORIZED ERROR',
+				'USER.CONTACTS_AUTHORIZED_ERROR',
 				HttpStatus.UNAUTHORIZED
 			)
 		}
 
 		const user = await this.findByEmail(decoded.email)
-		const user2 = await this.findByUsername(contactDto.contactUsername)
+		const user2 = await this.findByUsername(requestContact.contactUsername)
 		if (user2 == null) {
 			throw new HttpException(
-				'INCORRENT USERNAME REQUEST',
+				'USER.CONTACTS_INCORRENT_USERNAME_REQUEST',
 				HttpStatus.BAD_REQUEST
 			)
 		}
 
-		// already request was send
-		if (user.contacts.pending.find(item => item == user2.username) != undefined)
-			throw new HttpException('User alredy send request', HttpStatus.OK)
+		//  request already send
+		if (user.contacts.pending.find(item => item == user2._id) != undefined)
+			throw new HttpException(
+				'USER.CONTACTS_REQUEST_ALREDY_SEND',
+				HttpStatus.OK
+			)
 		// already in friends
-		if (user.contacts.added.find(item => item == user2.username) != undefined)
-			throw new HttpException('User alredy send request', HttpStatus.OK)
+		if (user.contacts.added.find(item => item == user2._id) != undefined)
+			throw new HttpException(
+				'USER.CONTACTS_REQUEST_ALREDY_SEND',
+				HttpStatus.OK
+			)
 
-		user.contacts.pending.push(user2.username)
-		user2.contacts.requests.push(user.username)
+		user.contacts.pending.push(user2._id)
+		user2.contacts.requests.push(user._id)
 		await user.save()
 		await user2.save()
 
@@ -106,37 +236,34 @@ export class UsersService {
 	}
 
 	async contactAccept(
-		contactDto: AcceptContactDto,
+		acceptContact: AcceptContactDto,
 		headers: HeaderDto
 	): Promise<boolean> {
 		// Verify user
 		const token = headers.authorization.split(' ')[1]
 		if (!token) {
 			throw new HttpException(
-				'CONTACTS.AUTHORIZED ERROR',
+				'USER.CONTACTS_AUTHORIZED_ERROR',
 				HttpStatus.UNAUTHORIZED
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != contactDto.email) {
+		if (decoded.email != acceptContact.email) {
 			throw new HttpException(
-				'CONTACTS.AUTHORIZED ERROR',
+				'USER.CONTACTS_AUTHORIZED_ERROR',
 				HttpStatus.UNAUTHORIZED
 			)
 		}
 
 		const user = await this.findByEmail(decoded.email)
-		const user2 = await this.findByUsername(contactDto.contactUsername)
+		const user2 = await this.findByUsername(acceptContact.contactUsername)
 		if (user2 == null) {
-			throw new HttpException(
-				'INCORRENT USERNAME REQUEST',
-				HttpStatus.BAD_REQUEST
-			)
+			throw new HttpException('USER.CONTACTS_ERROR', HttpStatus.BAD_REQUEST)
 		}
 		if (
 			user.contacts.requests.find(item => item == user2.username) == undefined
 		)
-			throw new HttpException('USER DONT SEND FRIEND REQUEST', HttpStatus.OK)
+			throw new HttpException('USER.CONTACTS_ERROR', HttpStatus.OK)
 
 		// user1 delete user2 from pending and request lists
 		const index11 = user.contacts.pending.indexOf(user2.username)
@@ -173,7 +300,7 @@ export class UsersService {
 	}
 
 	async contactReject(
-		contactDto: AcceptContactDto,
+		rejectContact: RejectContactDto,
 		headers: HeaderDto
 	): Promise<boolean> {
 		// Verify user
@@ -185,7 +312,7 @@ export class UsersService {
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != contactDto.email) {
+		if (decoded.email != rejectContact.email) {
 			throw new HttpException(
 				'CONTACTS.AUTHORIZED ERROR',
 				HttpStatus.UNAUTHORIZED
@@ -193,7 +320,7 @@ export class UsersService {
 		}
 
 		const user = await this.findByEmail(decoded.email)
-		const user2 = await this.findByUsername(contactDto.contactUsername)
+		const user2 = await this.findByUsername(rejectContact.contactUsername)
 		if (user2 == null) {
 			throw new HttpException(
 				'INCORRENT USERNAME REQUEST',
@@ -286,34 +413,4 @@ export class UsersService {
 		await userFromDb.save()
 		return true
 	}
-
-	// async updateProfile(profileDto: ProfileDto): Promise<User> {
-	// 	let userFromDb = await this.userModel.findOne({ email: profileDto.email })
-	// 	if (!userFromDb)
-	// 		throw new HttpException('COMMON.USER_NOT_FOUND', HttpStatus.NOT_FOUND)
-
-	// 	// if(profileDto.name) userFromDb.name = profileDto.name;
-	// 	// if(profileDto.surname) userFromDb.surname = profileDto.surname;
-	// 	// if(profileDto.phone) userFromDb.phone = profileDto.phone;
-	// 	// if(profileDto.birthdaydate) userFromDb.birthdaydate = profileDto.birthdaydate;
-
-	// 	await userFromDb.save()
-	// 	return userFromDb
-	// }
-
-	// async updateSettings(settingsDto: SettingsDto): Promise<User> {
-	// 	var userFromDb = await this.userModel.findOne({ email: settingsDto.email })
-	// 	if (!userFromDb)
-	// 		throw new HttpException('COMMON.USER_NOT_FOUND', HttpStatus.NOT_FOUND)
-
-	// 	userFromDb.settings = userFromDb.settings || {}
-	// 	for (var key in settingsDto) {
-	// 		if (settingsDto.hasOwnProperty(key) && key != 'email') {
-	// 			userFromDb.settings[key] = settingsDto[key]
-	// 		}
-	// 	}
-
-	// 	await userFromDb.save()
-	// 	return userFromDb
-	// }
 }

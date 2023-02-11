@@ -15,22 +15,6 @@ export interface IUserResponse {
 	token: string
 }
 
-export interface IAuthResponse {
-	user: IUserResponse
-	// lists: IList[]
-	// tasks: ITask[]
-}
-
-export interface ILoginResponse {
-	user: IUserResponse
-	// lists: IList[]
-	// tasks: ITask[]
-}
-
-export interface ISignUpResponse {
-	user: IUserResponse
-}
-
 export const userApi = createApi({
 	reducerPath: 'userApi',
 	baseQuery: fetchBaseQuery({
@@ -45,14 +29,14 @@ export const userApi = createApi({
 	}),
 	endpoints: build => ({
 		// AUTH
-		auth: build.query<IAuthResponse, {}>({
+		auth: build.query<IUserResponse, {}>({
 			query: () => ({
 				url: `${baseUrl}/auth`,
 				method: 'GET',
 			}),
 		}),
 
-		login: build.mutation<ILoginResponse, { email: string; password: string }>({
+		login: build.mutation<IUserResponse, { email: string; password: string }>({
 			query: items => ({
 				url: `${serverIp}auth/email/login`,
 				// url: 'http://localhost:3000/auth/email/login',
@@ -65,7 +49,7 @@ export const userApi = createApi({
 		}),
 
 		signup: build.mutation<
-			ISignUpResponse,
+			IUserResponse,
 			{ email: string; username: string; password: string }
 		>({
 			query: ({ email, password, username }) => ({
@@ -80,7 +64,7 @@ export const userApi = createApi({
 		}),
 
 		changePassword: build.mutation<
-			ISignUpResponse,
+			IUserResponse,
 			{ password: string; newPassword: string }
 		>({
 			query: ({ password, newPassword }) => ({
@@ -93,7 +77,7 @@ export const userApi = createApi({
 			}),
 		}),
 
-		changeEmail: build.mutation<ISignUpResponse, { newEmail: string }>({
+		changeEmail: build.mutation<IUserResponse, { newEmail: string }>({
 			query: ({ newEmail }) => ({
 				url: `${serverIp}user/newEmail`,
 				method: 'POST',
@@ -103,7 +87,7 @@ export const userApi = createApi({
 			}),
 		}),
 
-		changeUsername: build.mutation<ISignUpResponse, { newUsername: string }>({
+		changeUsername: build.mutation<IUserResponse, { newUsername: string }>({
 			query: ({ newUsername }) => ({
 				url: `${serverIp}user/newUsername`,
 				method: 'POST',

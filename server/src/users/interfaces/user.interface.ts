@@ -1,5 +1,5 @@
-import { Document, ObjectId } from 'mongoose'
-import { Photo } from 'common/interfaces/photo.interface'
+import { Document } from 'mongoose'
+// import { Photo } from 'common/interfaces/photo.interface'
 
 export interface User extends Document {
 	username: string

@@ -7,7 +7,6 @@ import { IUserState } from './user.types'
 
 const initialState: IUserState = {
 	activeUser: {
-		id: '',
 		email: '',
 		username: '',
 	},
@@ -21,9 +20,8 @@ export const userSlice = createSlice({
 	reducers: {
 		logout: (state, action: PayloadAction<null>) => {
 			localStorage.removeItem('token')
-			state.activeUser.email = ''
-			state.activeUser.id = ''
 			state.activeUser.username = ''
+			state.activeUser.email = ''
 			state.token = ''
 		},
 
@@ -52,21 +50,21 @@ export const userSlice = createSlice({
 			builder.addMatcher(
 				userApi.endpoints.auth.matchFulfilled,
 				(state, { payload }) => {
-					state.token = payload.user.token
-					state.activeUser.email = payload.user.email
-					state.activeUser.id = payload.user.userId
-					state.activeUser.username = payload.user.username
-					localStorage.setItem('token', payload.user.token)
+					// state.token = payload.user.token
+					// state.activeUser.email = payload.user.email
+					// state.activeUser.id = payload.user.userId
+					// state.activeUser.username = payload.user.username
+					// localStorage.setItem('token', payload.user.token)
 				}
 			),
 			builder.addMatcher(
 				userApi.endpoints.signup.matchFulfilled,
 				(state, { payload }) => {
-					state.token = payload.user.token
-					state.activeUser.email = payload.user.email
-					state.activeUser.id = payload.user.userId
-					state.activeUser.username = payload.user.username
-					localStorage.setItem('token', payload.user.token)
+					// state.token = payload.user.token
+					// state.activeUser.email = payload.user.email
+					// state.activeUser.id = payload.user.userId
+					// state.activeUser.username = payload.user.username
+					// localStorage.setItem('token', payload.user.token)
 				}
 			)
 	},
