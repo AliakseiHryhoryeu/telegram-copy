@@ -17,7 +17,6 @@ export interface User extends Document {
 			userid: string
 		}
 	}
-	settings: {}
 	contacts: {
 		pending: string[] // req to user
 		requests: string[] // user requests

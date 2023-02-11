@@ -58,7 +58,7 @@ export class TasksController {
 		@Headers() headers
 	): Promise<IResponse> {
 		try {
-			var task = await this.tasksService.readTask1(readTaskDto, headers)
+			var task = await this.tasksService.readTask(readTaskDto, headers)
 			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new TaskDto(task))
 		} catch (error) {
 			return new ResponseError('TASKS.UPDATE_ERROR', error)

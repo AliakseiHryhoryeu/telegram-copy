@@ -40,26 +40,25 @@ export class TasksService {
 	async findTasksByUsername(username: string): Promise<Task> {
 		return await this.taskModel.findOne({ username: username }).exec()
 	}
-	async readTask1(readTaskDto: ReadTaskDto, headers: HeaderDto): Promise<Task> {
+	async readTask(readTaskDto: ReadTaskDto, headers: HeaderDto): Promise<Task> {
 		// Verify user
 		try {
-			// console.log(headers)
-			// const token = headers.authorization.split(' ')[1]
-			// if (!token) {
-			// 	throw new HttpException(
-			// 		'TASKS.AUTHORIZED ERROR',
-			// 		HttpStatus.UNAUTHORIZED
-			// 	)
-			// }
-			// const decoded = jwt.verify(token, jwtSecretKey)
+			const token = headers.authorization.split(' ')[1]
+			if (!token) {
+				throw new HttpException(
+					'TASKS.AUTHORIZED ERROR',
+					HttpStatus.UNAUTHORIZED
+				)
+			}
+			const decoded = jwt.verify(token, jwtSecretKey)
 
-			// const user = await this.findUserByEmail(decoded.email)
-			// if (!user) {
-			// 	throw new HttpException(
-			// 		'TASKS.TOKEN AUTHORIZED ERROR',
-			// 		HttpStatus.UNAUTHORIZED
-			// 	)
-			// }
+			const user = await this.findUserByEmail(decoded.email)
+			if (!user) {
+				throw new HttpException(
+					'TASKS.TOKEN AUTHORIZED ERROR',
+					HttpStatus.UNAUTHORIZED
+				)
+			}
 
 			// if (decoded.email != readTaskDto.email) {
 			// 	throw new HttpException(

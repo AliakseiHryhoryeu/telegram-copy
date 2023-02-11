@@ -5,8 +5,6 @@ import { Injectable, HttpStatus, HttpException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { User } from './interfaces/user.interface'
 import { InjectModel } from '@nestjs/mongoose'
-import { ProfileDto } from 'users/dto/profile.dto'
-import { SettingsDto } from 'users/dto/settings.dto'
 // import { UpdateGalleryDto } from './dto/update-gallery.dto'
 import * as _ from 'lodash'
 import { RequestContactDto } from './dto/contacts/request-contact'
@@ -33,10 +31,17 @@ export class UsersService {
 
 	async createNewUser(newUser: CreateUserDto): Promise<User> {
 		if (this.isValidEmail(newUser.email) && newUser.password) {
-			var userRegistered = await this.findByEmail(newUser.email)
-			if (!userRegistered) {
+			const userRegistered = await this.findByEmail(newUser.email)
+			const userUsername = await this.findByUsername(newUser.username)
+			if (userUsername) {
+				throw new HttpException(
+					'REGISTRATION.USERNAME_ALREADY_REGISTERED',
+					HttpStatus.FORBIDDEN
+				)
+			}
+			if (!userRegistered && !userUsername) {
 				newUser.password = await bcrypt.hash(newUser.password, saltRounds)
-				var createdUser = new this.userModel(newUser)
+				const createdUser = new this.userModel(newUser)
 				createdUser.roles = ['User']
 				return await createdUser.save()
 				// } else if (!userRegistered.auth.email.valid) {
