@@ -33,6 +33,24 @@ import { DeleteContactDto } from './dto/contacts/delete-contact'
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
+	@Get('/user/:id')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async getUserContactsInfo(
+		@Body() changePasswordDto: ChangePasswordDto,
+		@Headers() headers: HeaderDto
+	): Promise<IResponse> {
+		try {
+			var user = await this.usersService.changePassword(
+				changePasswordDto,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
+
 	@Post('/changePassword')
 	@UseGuards(RolesGuard)
 	@Roles('User')

@@ -28,3 +28,8 @@ export interface User extends Document {
 	//   gallery: Photo[];
 	// }
 }
+
+interface IUserContact {
+	username: string
+	// tasks:ITask
+}

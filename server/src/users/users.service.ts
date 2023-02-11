@@ -73,6 +73,10 @@ export class UsersService {
 		}
 	}
 
+	// ======================== //
+	// CHANGE USER PRIMARY DATA //
+	// ======================== //
+
 	async changeUsername(
 		changeUsernameDto: ChangeUsernameDto,
 		headers: HeaderDto
@@ -185,6 +189,9 @@ export class UsersService {
 		return { token: accessToken, user: new UserDto(userFromDb) }
 	}
 
+	// ======== //
+	// CONTACTS //
+	// ======== //
 	async contactRequest(
 		requestContact: RequestContactDto,
 		headers: HeaderDto
