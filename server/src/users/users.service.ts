@@ -19,6 +19,7 @@ import { ChangePasswordDto } from './dto/change-password'
 import { AcceptContactDto } from './dto/contacts/accept-contact'
 import { RejectContactDto } from './dto/contacts/reject-contact'
 import { RequestContactDto } from './dto/contacts/request-contact'
+import { ContactsDto } from './dto/contacts/contacts.dto'
 
 const saltRounds = 10
 const jwtSecretKey = config.jwt.secretOrKey
@@ -205,12 +206,6 @@ export class UsersService {
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != requestContact.email) {
-			throw new HttpException(
-				'USER.CONTACTS_AUTHORIZED_ERROR',
-				HttpStatus.UNAUTHORIZED
-			)
-		}
 
 		const user = await this.findByEmail(decoded.email)
 		const user2 = await this.findByUsername(requestContact.contactUsername)
@@ -245,7 +240,7 @@ export class UsersService {
 	async contactAccept(
 		acceptContact: AcceptContactDto,
 		headers: HeaderDto
-	): Promise<boolean> {
+	): Promise<ContactsDto> {
 		// Verify user
 		const token = headers.authorization.split(' ')[1]
 		if (!token) {
@@ -255,12 +250,6 @@ export class UsersService {
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != acceptContact.email) {
-			throw new HttpException(
-				'USER.CONTACTS_AUTHORIZED_ERROR',
-				HttpStatus.UNAUTHORIZED
-			)
-		}
 
 		const user = await this.findByEmail(decoded.email)
 		const user2 = await this.findByUsername(acceptContact.contactUsername)
@@ -303,7 +292,8 @@ export class UsersService {
 		await user.save()
 		await user2.save()
 
-		return true
+		// return user.contacts
+		return
 	}
 
 	async contactReject(
@@ -319,12 +309,6 @@ export class UsersService {
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != rejectContact.email) {
-			throw new HttpException(
-				'CONTACTS.AUTHORIZED ERROR',
-				HttpStatus.UNAUTHORIZED
-			)
-		}
 
 		const user = await this.findByEmail(decoded.email)
 		const user2 = await this.findByUsername(rejectContact.contactUsername)
@@ -371,12 +355,6 @@ export class UsersService {
 			)
 		}
 		const decoded = jwt.verify(token, jwtSecretKey)
-		if (decoded.email != contactDto.email) {
-			throw new HttpException(
-				'CONTACTS.AUTHORIZED ERROR',
-				HttpStatus.UNAUTHORIZED
-			)
-		}
 
 		const user = await this.findByEmail(decoded.email)
 		const user2 = await this.findByUsername(contactDto.contactUsername)

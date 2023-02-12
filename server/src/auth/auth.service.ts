@@ -32,8 +32,12 @@ export class AuthService {
 
 		if (!userFromDb)
 			throw new HttpException('LOGIN.USER_NOT_FOUND', HttpStatus.UNAUTHORIZED)
-		console.log(userFromDb)
-		return userFromDb
+
+		var accessToken = await this.jwtService.createToken(
+			userFromDb.email,
+			userFromDb.roles
+		)
+		return { token: accessToken, user: new UserDto(userFromDb) }
 	}
 
 	async validateLogin(email, password) {

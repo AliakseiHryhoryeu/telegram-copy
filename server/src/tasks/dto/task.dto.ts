@@ -1,21 +1,25 @@
 export class TaskDto {
 	constructor(object: any) {
+		this._id = object._id
 		this.title = object.title
 		this.text = object.text
-		this.username = object.username
 		this.checked = object.checked
 		this.date = object.date
+		this.userid = object.userid
+		this.commentsid = object.commentsid
 	}
+	readonly _id: string
 	readonly title: string
 	readonly text: string
-	readonly username: string
 	readonly checked: boolean
 	readonly date: Date
+	readonly userid: string
+	readonly commentsid: string[]
 }
 
 export class AllTasksDto {
 	constructor(object: any) {
-		this.tasks = object.tasks
+		this.tasks = object
 	}
 	readonly tasks: TaskDto[]
 }

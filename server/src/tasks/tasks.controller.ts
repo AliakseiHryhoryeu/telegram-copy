@@ -10,9 +10,9 @@ import {
 	HttpStatus,
 	UseGuards,
 	UseInterceptors,
-	Param,
 	Headers,
 	Delete,
+	Query,
 } from '@nestjs/common'
 import { AllTasksDto, TaskDto } from './dto/task.dto'
 import { TasksService } from './tasks.service'
@@ -29,27 +29,13 @@ import { ReadTaskDto } from './dto/read-task'
 @UseGuards(AuthGuard('jwt'))
 @UseInterceptors(LoggingInterceptor, TransformInterceptor)
 export class TasksController {
-	constructor(
-		private readonly tasksService: TasksService // private readonly userService: UsersService // private readonly authService: AuthService
-	) {}
-
-	// @Get('/')
-	// @UseGuards(RolesGuard)
-	// @Roles('User')
-	// async readAllTasks(@Param() params, @Headers() headers): Promise<IResponse> {
-	// 	try {
-	// 		var task = await this.usersService.findByEmail(params.email)
-	// 		return new ResponseSuccess('COMMON.SUCCESS', new TaskDto(task))
-	// 	} catch (error) {
-	// 		return new ResponseError('COMMON.ERROR.GENERIC_ERROR', error)
-	// 	}
-	// }
+	constructor(private readonly tasksService: TasksService) {}
 
 	@Get('read')
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async readTask(
-		@Param() readTaskDto: ReadTaskDto,
+		@Query() readTaskDto: ReadTaskDto,
 		@Headers() headers
 	): Promise<IResponse> {
 		try {
@@ -66,11 +52,11 @@ export class TasksController {
 		try {
 			var allTasks = await this.tasksService.readAllTasks(headers)
 			return new ResponseSuccess(
-				'TASKS.UPDATE_SUCCESS',
+				'TASKS.READ_ALL_SUCCESS',
 				new AllTasksDto(allTasks)
 			)
 		} catch (error) {
-			return new ResponseError('TASKS.UPDATE_ERROR', error)
+			return new ResponseError('TASKS.READ_ALL_ERROR', error)
 		}
 	}
 
@@ -112,7 +98,7 @@ export class TasksController {
 	): Promise<IResponse> {
 		try {
 			var task = await this.tasksService.deleteTask(deleteTaskDto, headers)
-			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new TaskDto(task))
+			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new AllTasksDto(task))
 		} catch (error) {
 			return new ResponseError('TASKS.UPDATE_ERROR', error)
 		}

@@ -4,9 +4,8 @@ export const TaskSchema = new mongoose.Schema({
 	id: String,
 	title: String,
 	text: String,
-	username: String,
-	userid: String,
 	checked: { type: Boolean, default: false },
-	// commentsid: [],
 	date: { type: Date, default: Date.now },
+	userid: String,
+	commentsid: Array,
 })

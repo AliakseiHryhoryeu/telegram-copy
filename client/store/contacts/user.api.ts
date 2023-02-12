@@ -1,12 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { RootState } from '../'
-import {
-	IContacts,
-	IContactsResponse,
-	IUserAuthResponse,
-	IUserResponse,
-} from './user.types'
+import { RootState } from '..'
+import { IContacts, IUserAuthResponse, IUserResponse } from './user.types'
 
 const serverIp = process.env.NEXT_PUBLIC_SERVER_IP
 const baseUrl = serverIp + 'api/user'
@@ -105,7 +100,7 @@ export const userApi = createApi({
 		// Contacts //
 		// ======== //
 		contactRequest: build.mutation<
-			IContactsResponse,
+			IContacts,
 			{ password: string; newUsername: string }
 		>({
 			query: ({ newUsername }) => ({
@@ -117,38 +112,38 @@ export const userApi = createApi({
 			}),
 		}),
 		contactAccept: build.mutation<
-			IContactsResponse,
-			{ contactUsername: string }
+			IContacts,
+			{ password: string; newUsername: string }
 		>({
-			query: ({ contactUsername }) => ({
+			query: ({ newUsername }) => ({
 				url: `${serverIp}user/contacts/accept`,
 				method: 'POST',
 				body: {
-					contactUsername: contactUsername,
+					newUsername: newUsername,
 				},
 			}),
 		}),
 		contactReject: build.mutation<
-			IContactsResponse,
-			{ contactUsername: string }
+			IContacts,
+			{ password: string; newUsername: string }
 		>({
-			query: ({ contactUsername }) => ({
+			query: ({ newUsername }) => ({
 				url: `${serverIp}user/contacts/reject`,
 				method: 'POST',
 				body: {
-					contactUsername: contactUsername,
+					newUsername: newUsername,
 				},
 			}),
 		}),
 		contactDelete: build.mutation<
-			IContactsResponse,
-			{ contactUsername: string }
+			IContacts,
+			{ password: string; newUsername: string }
 		>({
-			query: ({ contactUsername }) => ({
+			query: ({ newUsername }) => ({
 				url: `${serverIp}user/contacts/delete`,
 				method: 'POST',
 				body: {
-					contactUsername: contactUsername,
+					newUsername: newUsername,
 				},
 			}),
 		}),

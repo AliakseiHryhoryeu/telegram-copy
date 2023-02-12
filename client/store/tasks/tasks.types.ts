@@ -1,20 +1,29 @@
+export interface ITasksState {
+	tasks: ITask[]
+}
+
 export interface ITask {
 	_id: string
 	title: string
 	text: string
-	username: string
 	checked: boolean
-}
-export interface ITasksState {
-	Tasks: ITask[]
-	// showAllLists: boolean
-	// colors: string[]
+	date: Date
+	userid: string
+	commentsid: string[]
 }
 
-// later
-export interface IComment {
-	_id: string
-	text: string
-	username: string
-	date: Date
+export interface ITaskResponse {
+	data: {
+		success: boolean
+		message: string
+		data: ITask
+	}
+}
+
+export interface IAllTasksResponse {
+	data: {
+		success: boolean
+		message: string
+		data: ITask[]
+	}
 }

@@ -111,7 +111,7 @@ export class UsersController {
 	): Promise<IResponse> {
 		try {
 			var user = await this.usersService.contactRequest(requestContact, headers)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', user)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}

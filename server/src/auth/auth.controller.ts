@@ -5,6 +5,7 @@ import {
 	HttpCode,
 	Body,
 	Headers,
+	Get,
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Login } from './interfaces/login.interface'
@@ -22,12 +23,12 @@ export class AuthController {
 		private readonly userService: UsersService
 	) {}
 
-	@Post('jwt')
+	@Get('jwt')
 	@HttpCode(HttpStatus.OK)
 	public async authJwt(@Headers() headers: HeaderDto): Promise<IResponse> {
 		try {
-			var user = await this.authService.validateJwt(headers)
-			return new ResponseSuccess('LOGIN.SUCCESS', new UserDto(user))
+			var response = await this.authService.validateJwt(headers)
+			return new ResponseSuccess('LOGIN.SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('LOGIN.ERROR', error)
 		}

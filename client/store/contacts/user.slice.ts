@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import type { RootState } from '../'
+import type { RootState } from '..'
 
 import { userApi } from './user.api'
 import { IUserState } from './user.types'
@@ -45,7 +45,20 @@ export const userSlice = createSlice({
 			// AUTH
 			userApi.endpoints.auth.matchFulfilled,
 			(state, { payload }) => {
-				if (payload.success) {
+				state.activeUser = payload.data.user
+				state.isAuth = true
+				state.token = payload.data.token.access_token
+				try {
+					localStorage.setItem('token', payload.data.token.access_token)
+				} catch (e) {
+					console.log(e)
+				}
+			}
+		),
+			builder.addMatcher(
+				// LOGIN
+				userApi.endpoints.login.matchFulfilled,
+				(state, { payload }) => {
 					state.activeUser = payload.data.user
 					state.isAuth = true
 					state.token = payload.data.token.access_token
@@ -54,44 +67,19 @@ export const userSlice = createSlice({
 					} catch (e) {
 						console.log(e)
 					}
-				} else {
-					console.log(payload?.message)
-				}
-			}
-		),
-			builder.addMatcher(
-				// LOGIN
-				userApi.endpoints.login.matchFulfilled,
-				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser = payload.data.user
-						state.isAuth = true
-						state.token = payload.data.token.access_token
-						try {
-							localStorage.setItem('token', payload.data.token.access_token)
-						} catch (e) {
-							console.log(e)
-						}
-					} else {
-						console.log(payload?.message)
-					}
 				}
 			),
 			builder.addMatcher(
 				// SIGNUP
 				userApi.endpoints.signup.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser = payload.data.user
-						state.isAuth = true
-						state.token = payload.data.token.access_token
-						try {
-							localStorage.setItem('token', payload.data.token.access_token)
-						} catch (e) {
-							console.log(e)
-						}
-					} else {
-						console.log(payload?.message)
+					state.activeUser = payload.data.user
+					state.isAuth = true
+					state.token = payload.data.token.access_token
+					try {
+						localStorage.setItem('token', payload.data.token.access_token)
+					} catch (e) {
+						console.log(e)
 					}
 				}
 			),
@@ -99,77 +87,49 @@ export const userSlice = createSlice({
 				// CHANGE PASSWORD
 				userApi.endpoints.changePassword.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser = payload.data.user
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser = payload.data.user
 				}
 			),
 			builder.addMatcher(
 				// CHANGE USERNAME
 				userApi.endpoints.changeUsername.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser = payload.data.user
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser = payload.data.user
 				}
 			),
 			builder.addMatcher(
 				// CHANGE EMAIL
 				userApi.endpoints.changeEmail.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser = payload.data.user
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser = payload.data.user
 				}
 			),
 			builder.addMatcher(
 				// CONTACT ACCEPT
 				userApi.endpoints.contactAccept.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser.contacts = payload.data.contacts
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser.contacts = payload
 				}
 			),
 			builder.addMatcher(
 				// CONTACT REQUEST
 				userApi.endpoints.contactRequest.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser.contacts = payload.data.contacts
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser.contacts = payload
 				}
 			),
 			builder.addMatcher(
 				// CONTACT REJECT
 				userApi.endpoints.contactReject.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser.contacts = payload.data.contacts
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser.contacts = payload
 				}
 			),
 			builder.addMatcher(
 				// CONTACT DELETE
 				userApi.endpoints.contactDelete.matchFulfilled,
 				(state, { payload }) => {
-					if (payload.success) {
-						state.activeUser.contacts = payload.data.contacts
-					} else {
-						console.log(payload?.message)
-					}
+					state.activeUser.contacts = payload
 				}
 			)
 	},
