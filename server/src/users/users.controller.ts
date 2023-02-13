@@ -1,3 +1,4 @@
+import { IContacts } from './dto/contacts/contacts.dto'
 import {
 	Controller,
 	Get,
@@ -7,6 +8,8 @@ import {
 	UseInterceptors,
 	Param,
 	Headers,
+	Query,
+	Delete,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
@@ -17,7 +20,7 @@ import { RolesGuard } from '../common/guards/roles.guard'
 import { Roles } from '../common/decorators/roles.decorator'
 import { LoggingInterceptor } from '../common/interceptors/logging.interceptor'
 import { TransformInterceptor } from '../common/interceptors/transform.interceptor'
-import { HeaderDto } from 'auth/dto/header.dto'
+import { HeaderDto } from '../auth/dto/header.dto'
 import { UserDto } from './dto/user.dto'
 import { ChangePasswordDto } from './dto/change-password'
 import { ChangeUsernameDto } from './dto/change-username'
@@ -26,6 +29,7 @@ import { RejectContactDto } from './dto/contacts/reject-contact'
 import { RequestContactDto } from './dto/contacts/request-contact'
 import { AcceptContactDto } from './dto/contacts/accept-contact'
 import { DeleteContactDto } from './dto/contacts/delete-contact'
+import { IContactDto, SearchContactDto } from './dto/contacts/search-contact'
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
@@ -33,19 +37,52 @@ import { DeleteContactDto } from './dto/contacts/delete-contact'
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Get('/user/:id')
+	// @Get('/user/:id')
+	// @UseGuards(RolesGuard)
+	// @Roles('User')
+	// async getUserContactsInfo(
+	// 	@Body() changePasswordDto: ChangePasswordDto,
+	// 	@Headers() headers: HeaderDto
+	// ): Promise<IResponse> {
+	// 	try {
+	// 		var user = await this.usersService.changePassword(
+	// 			changePasswordDto,
+	// 			headers
+	// 		)
+	// 		return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+	// 	} catch (error) {
+	// 		return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+	// 	}
+	// }
+
+	@Get('/contacts/all')
 	@UseGuards(RolesGuard)
 	@Roles('User')
-	async getUserContactsInfo(
-		@Body() changePasswordDto: ChangePasswordDto,
+	async contactTasks(@Headers() headers: HeaderDto): Promise<IResponse> {
+		try {
+			var response = await this.usersService.contactsInfo(headers)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
+		} catch (error) {
+			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
+		}
+	}
+
+	@Post('/contacts/search')
+	@UseGuards(RolesGuard)
+	@Roles('User')
+	async searchContact(
+		@Body() searchContactDto: SearchContactDto,
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.changePassword(
-				changePasswordDto,
+			var response = await this.usersService.searchContact(
+				searchContactDto,
 				headers
 			)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			return new ResponseSuccess(
+				'CONTACTS.UPDATE_SUCCESS',
+				new IContactDto(response)
+			)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
@@ -59,11 +96,11 @@ export class UsersController {
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.changePassword(
+			var response = await this.usersService.changePassword(
 				changePasswordDto,
 				headers
 			)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
@@ -77,11 +114,11 @@ export class UsersController {
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			const user = await this.usersService.changeUsername(
+			const response = await this.usersService.changeUsername(
 				changeUsernameDto,
 				headers
 			)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
@@ -95,8 +132,11 @@ export class UsersController {
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.changeEmail(changeEmailDto, headers)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			var response = await this.usersService.changeEmail(
+				changeEmailDto,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
@@ -125,8 +165,11 @@ export class UsersController {
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactAccept(acceptContact, headers)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			const response = await this.usersService.contactAccept(
+				acceptContact,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
@@ -140,14 +183,17 @@ export class UsersController {
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactReject(rejectContact, headers)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			const response = await this.usersService.contactReject(
+				rejectContact,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}
 	}
 
-	@Post('/contacts/delete')
+	@Delete('/contacts/delete')
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async deleteContact(
@@ -155,8 +201,11 @@ export class UsersController {
 		@Headers() headers: HeaderDto
 	): Promise<IResponse> {
 		try {
-			var user = await this.usersService.contactDelete(deleteContact, headers)
-			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', new UserDto(user))
+			const response = await this.usersService.contactDelete(
+				deleteContact,
+				headers
+			)
+			return new ResponseSuccess('CONTACTS.UPDATE_SUCCESS', response)
 		} catch (error) {
 			return new ResponseError('CONTACTS.UPDATE_ERROR', error)
 		}

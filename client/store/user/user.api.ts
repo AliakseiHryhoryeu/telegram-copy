@@ -9,12 +9,12 @@ import {
 } from './user.types'
 
 const serverIp = process.env.NEXT_PUBLIC_SERVER_IP
-const baseUrl = serverIp + 'api/user'
+// const baseUrl = serverIp + 'api/user'
 
 export const userApi = createApi({
 	reducerPath: 'userApi',
 	baseQuery: fetchBaseQuery({
-		baseUrl: baseUrl,
+		baseUrl: serverIp,
 		prepareHeaders: (headers, { getState }) => {
 			const token = (getState() as RootState).user.token
 			if (token) {
@@ -25,9 +25,9 @@ export const userApi = createApi({
 	}),
 	endpoints: build => ({
 		// AUTH
-		auth: build.query<IUserAuthResponse, {}>({
+		auth: build.mutation<IUserAuthResponse, {}>({
 			query: () => ({
-				url: `${baseUrl}/auth/jwt`,
+				url: `${serverIp}auth/jwt`,
 				method: 'GET',
 			}),
 		}),
@@ -79,10 +79,11 @@ export const userApi = createApi({
 			IUserResponse,
 			{ password: string; newEmail: string }
 		>({
-			query: ({ newEmail }) => ({
-				url: `${serverIp}user/changeEmail`,
+			query: ({ password, newEmail }) => ({
+				url: `${serverIp}users/changeEmail`,
 				method: 'POST',
 				body: {
+					password: password,
 					newEmail: newEmail,
 				},
 			}),
@@ -92,10 +93,11 @@ export const userApi = createApi({
 			IUserResponse,
 			{ password: string; newUsername: string }
 		>({
-			query: ({ newUsername }) => ({
+			query: ({ password, newUsername }) => ({
 				url: `${serverIp}user/changeUsername`,
 				method: 'POST',
 				body: {
+					password: password,
 					newUsername: newUsername,
 				},
 			}),
@@ -104,51 +106,39 @@ export const userApi = createApi({
 		// ======== //
 		// Contacts //
 		// ======== //
-		contactRequest: build.mutation<
-			IContactsResponse,
-			{ password: string; newUsername: string }
-		>({
-			query: ({ newUsername }) => ({
-				url: `${serverIp}user/contacts/request`,
+		contactRequest: build.mutation<IContactsResponse, { contactid: string }>({
+			query: ({ contactid }) => ({
+				url: `${serverIp}users/contacts/request`,
 				method: 'POST',
 				body: {
-					newUsername: newUsername,
+					contactid: contactid,
 				},
 			}),
 		}),
-		contactAccept: build.mutation<
-			IContactsResponse,
-			{ contactUsername: string }
-		>({
-			query: ({ contactUsername }) => ({
-				url: `${serverIp}user/contacts/accept`,
+		contactAccept: build.mutation<IContactsResponse, { contactid: string }>({
+			query: ({ contactid }) => ({
+				url: `${serverIp}users/contacts/accept`,
 				method: 'POST',
 				body: {
-					contactUsername: contactUsername,
+					contactid: contactid,
 				},
 			}),
 		}),
-		contactReject: build.mutation<
-			IContactsResponse,
-			{ contactUsername: string }
-		>({
-			query: ({ contactUsername }) => ({
-				url: `${serverIp}user/contacts/reject`,
+		contactReject: build.mutation<IContactsResponse, { contactid: string }>({
+			query: ({ contactid }) => ({
+				url: `${serverIp}users/contacts/reject`,
 				method: 'POST',
 				body: {
-					contactUsername: contactUsername,
+					contactid: contactid,
 				},
 			}),
 		}),
-		contactDelete: build.mutation<
-			IContactsResponse,
-			{ contactUsername: string }
-		>({
-			query: ({ contactUsername }) => ({
-				url: `${serverIp}user/contacts/delete`,
+		contactDelete: build.mutation<IContactsResponse, { contactid: string }>({
+			query: ({ contactid }) => ({
+				url: `${serverIp}users/contacts/delete`,
 				method: 'POST',
 				body: {
-					contactUsername: contactUsername,
+					contactid: contactid,
 				},
 			}),
 		}),
@@ -158,7 +148,7 @@ export const userApi = createApi({
 export const {
 	useSignupMutation,
 	useLoginMutation,
-	useAuthQuery,
+	useAuthMutation,
 	useChangeEmailMutation,
 	useChangePasswordMutation,
 	useChangeUsernameMutation,

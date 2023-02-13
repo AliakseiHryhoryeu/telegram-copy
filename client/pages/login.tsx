@@ -6,7 +6,6 @@ import { useFormik } from 'formik'
 import { loginSchema } from '../components/validation/LoginValidation'
 // import { FacebookIcon } from 'src/components/svg/FacebookIcon'
 // import { GoogleIcon } from 'src/components/svg/GoogleIcon'
-
 import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { useLoginMutation } from 'src/store/user/user.api'
 import { RootState } from 'src/store'
@@ -26,7 +25,6 @@ const LoginPage: FC = () => {
 	const formik = useFormik({
 		initialValues: {
 			email: '',
-			username: '',
 			password: '',
 			remember: true,
 		},
@@ -38,12 +36,14 @@ const LoginPage: FC = () => {
 			})
 		},
 	})
-
+	// if (isAuth === true) {
+	// 	router.push('/')
+	// }
 	useEffect(() => {
-		if (isAuth === true) {
+		if (isAuth == true) {
 			router.push('/')
 		}
-	}, [])
+	}, [isAuth])
 	return (
 		<>
 			<Head>
@@ -129,7 +129,13 @@ const LoginPage: FC = () => {
 								/>
 								<div className={styles.login__form_title}>Remember me</div>
 							</div>
-							<button type='submit' className={styles.login__form_button_login}>
+							<button
+								type='button'
+								onClick={() => {
+									formik.handleSubmit()
+								}}
+								className={styles.login__form_button_login}
+							>
 								log in
 							</button>
 						</div>

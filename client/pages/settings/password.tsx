@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useFormik } from 'formik'
-import { useRouter } from 'next/router'
 import Head from 'next/head'
 
+import Header from 'src/components/Settings/Header'
+import { changePasswordSchema } from 'src/components/validation/ChangePassValidation'
 import { useChangePasswordMutation } from 'src/store/user/user.api'
 import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { RootState } from 'src/store'
-
-import { changePasswordSchema } from 'src/components/validation/ChangePassValidation'
-import Header from 'src/components/Settings/Header'
 
 import styles from 'src/styles/settings.module.scss'
 
@@ -19,7 +17,6 @@ const SettingsPage = () => {
 			isAuth: state.user.isAuth,
 		}
 	})
-	const router = useRouter()
 
 	const [changePasswordRequest, { isLoading: isLoading }] =
 		useChangePasswordMutation()
@@ -38,11 +35,7 @@ const SettingsPage = () => {
 			})
 		},
 	})
-	useEffect(() => {
-		if (isAuth === false) {
-			router.push('/login')
-		}
-	}, [])
+
 	return (
 		<>
 			<Head>
@@ -99,7 +92,13 @@ const SettingsPage = () => {
 								onChange={formik.handleChange}
 								onBlur={formik.handleBlur}
 							/>
-							<button type='submit' className={styles.settings__right}>
+							<button
+								type='button'
+								onClick={() => {
+									formik.handleSubmit()
+								}}
+								className={styles.settings__right}
+							>
 								Change password
 							</button>
 						</div>

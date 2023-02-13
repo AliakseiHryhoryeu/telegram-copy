@@ -11,14 +11,35 @@ import { CrossIcon } from 'src/components/svg/CrossIcon'
 import { useActions } from 'src/hooks/useActions'
 import { useRouter } from 'next/router'
 import { ArrowBack } from 'src/components/svg/ArrowBack'
+import {
+	useContactAcceptMutation,
+	useContactDeleteMutation,
+	useContactRejectMutation,
+} from 'src/store/user/user.api'
 
 const ContactsPage = () => {
-	const { theme } = useTypedSelector((state: RootState) => {
-		return {
-			theme: state.theme.theme,
-		}
-	})
+	const { theme, contactsPending, contactsRequests, contactsAdded } =
+		useTypedSelector((state: RootState) => {
+			return {
+				theme: state.theme.theme,
+				contactsPending: state.user.activeUser.contacts.pending,
+				contactsRequests: state.user.activeUser.contacts.requests,
+				contactsAdded: state.user.activeUser.contacts.added,
+			}
+		})
 	// const [loginRequest, { isLoading: isLoading }] = useLoginMutation()
+
+	const [deleteContactRequest, { isLoading: isLoadingDel }] =
+		useContactDeleteMutation()
+	const [acceptContactRequest, { isLoading: isLoadingAccept }] =
+		useContactAcceptMutation()
+	const [rejectContactRequest, { isLoading: isLoading }] =
+		useContactRejectMutation()
+
+	// const [pendingContactRequest, { isLoading: isLoadingPending }] =
+	// 	useContactDeleteMutation()
+	// const [findContactRequest, { isLoading: isLoadingFind }] =
+	// 	useContactDeleteMutation()
 
 	const [inputValue, setInputhValue] = useState('')
 	const router = useRouter()
@@ -62,29 +83,60 @@ const ContactsPage = () => {
 					{inputValue == '' && (
 						<>
 							<div className={styles.contacts__title}>Contacts</div>
-							<div className={styles.contacts__item}>
-								<div className={styles.contacts__item__left}>
-									<div className={styles.contacts__photo}></div>
-									<div className={styles.contacts__username}>nickname1</div>
-								</div>
-								<div className={styles.contacts__item_popup}>
-									{/* <DotsIcon /> */}
-									Remove
-								</div>
-							</div>
-							<div className={styles.contacts__title}>Contact requests</div>
-							<div className={styles.contacts__item}>
-								<div className={styles.contacts__item__left}>
-									<div className={styles.contacts__photo}></div>
-									<div className={styles.contacts__username}>nickname1</div>
-								</div>
-								<div className={styles.contacts__item__right}>
-									<div className={styles.contacts__request_accept}>Accept</div>
-									<div className={styles.contacts__request_reject}>
-										<CrossIcon />
+							{contactsAdded.map(item => {
+								return (
+									<div className={styles.contacts__item} key={item._id}>
+										<div className={styles.contacts__item__left}>
+											<div className={styles.contacts__photo}></div>
+											<div className={styles.contacts__username}>
+												{item.username}
+											</div>
+										</div>
+										<div
+											className={styles.contacts__item_popup}
+											onClick={() => {
+												deleteContactRequest({ contactid: item._id })
+											}}
+										>
+											{/* <DotsIcon /> */}
+											Remove
+										</div>
 									</div>
-								</div>
-							</div>
+								)
+							})}
+
+							<div className={styles.contacts__title}>Contact requests</div>
+
+							{contactsRequests.map(item => {
+								return (
+									<div className={styles.contacts__item} key={item._id}>
+										<div className={styles.contacts__item__left}>
+											<div className={styles.contacts__photo}></div>
+											<div className={styles.contacts__username}>
+												{item.username}
+											</div>
+										</div>
+										<div className={styles.contacts__item__right}>
+											<div
+												className={styles.contacts__request_accept}
+												onClick={() => {
+													acceptContactRequest({ contactid: item._id })
+												}}
+											>
+												Accept
+											</div>
+											<div
+												className={styles.contacts__request_reject}
+												onClick={() => {
+													rejectContactRequest({ contactid: item._id })
+												}}
+											>
+												<CrossIcon />
+											</div>
+										</div>
+									</div>
+								)
+							})}
 						</>
 					)}
 					{inputValue !== ''}

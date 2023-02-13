@@ -2,6 +2,7 @@ import { Document } from 'mongoose'
 // import { Photo } from 'common/interfaces/photo.interface'
 
 export interface User extends Document {
+	_id: string
 	username: string
 	email: string
 	password: string
@@ -27,9 +28,4 @@ export interface User extends Document {
 	//   profilePic: Photo;
 	//   gallery: Photo[];
 	// }
-}
-
-interface IUserContact {
-	username: string
-	// tasks:ITask
 }

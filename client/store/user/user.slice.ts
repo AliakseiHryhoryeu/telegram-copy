@@ -5,6 +5,8 @@ import type { RootState } from '../'
 import { userApi } from './user.api'
 import { IUserState } from './user.types'
 
+import { emptyState } from './user.types'
+
 const initialState: IUserState = {
 	activeUser: {
 		username: '',
@@ -17,22 +19,20 @@ const initialState: IUserState = {
 		},
 	},
 	token: '',
-	isAuth: true,
+	isAuth: false,
 }
 
 export const userSlice = createSlice({
 	name: 'userSlice',
 	initialState,
 	reducers: {
-		logout: (state, action: PayloadAction<null>) => {
+		logout: state => {
 			localStorage.removeItem('token')
-			state.activeUser.username = ''
-			state.activeUser.email = ''
-			state.token = ''
+			state = emptyState
 		},
 
 		// Settings
-		updateToken: (state, action: PayloadAction<null>) => {
+		updateToken: state => {
 			try {
 				state.token = localStorage.getItem('token') || ''
 			} catch (e) {

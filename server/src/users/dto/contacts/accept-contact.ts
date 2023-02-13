@@ -1,3 +1,3 @@
 export class AcceptContactDto {
-	readonly contactUsername: string
+	readonly contactid: string
 }

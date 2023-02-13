@@ -1,6 +1,6 @@
-import { DeleteTaskDto } from './dto/delete-task'
-import { UpdateTaskDto } from './dto/update-task.dto'
-import { CreateTaskDto } from './dto/create-task.dto'
+import { DeleteCommentDto } from './dto/delete-comment'
+import { UpdateCommentDto } from './dto/update-comment.dto'
+import { CreateCommentDto } from './dto/create-comment.dto'
 import {
 	Controller,
 	Get,
@@ -15,8 +15,8 @@ import {
 	Query,
 	Injectable,
 } from '@nestjs/common'
-import { AllTasksDto, TaskDto } from './dto/task.dto'
-import { TasksService } from './tasks.service'
+import { AllCommentsDto, CommentDto } from './dto/comment.dto'
+import { CommentsService } from './comments.service'
 import { IResponse } from '../common/interfaces/response.interface'
 import { ResponseSuccess, ResponseError } from '../common/dto/response.dto'
 import { Roles } from '../common/decorators/roles.decorator'
@@ -24,37 +24,23 @@ import { LoggingInterceptor } from '../common/interceptors/logging.interceptor'
 import { TransformInterceptor } from '../common/interceptors/transform.interceptor'
 import { AuthGuard } from '@nestjs/passport'
 import { RolesGuard } from '../common/guards/roles.guard'
-import { ReadTaskDto } from './dto/read-task'
+import { ReadCommentDto } from './dto/read-comment'
 
-@Controller('tasks')
+@Controller('comments')
 @UseGuards(AuthGuard('jwt'))
 @UseInterceptors(LoggingInterceptor, TransformInterceptor)
-export class TasksController {
-	constructor(private readonly tasksService: TasksService) {}
+export class CommentsController {
+	constructor(private readonly commentsService: CommentsService) {}
 
-	@Get('read')
-	@UseGuards(RolesGuard)
-	@Roles('User')
-	async readTask(
-		@Query() readTaskDto: ReadTaskDto,
-		@Headers() headers
-	): Promise<IResponse> {
-		try {
-			var task = await this.tasksService.readTask(readTaskDto, headers)
-			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new TaskDto(task))
-		} catch (error) {
-			return new ResponseError('TASKS.UPDATE_ERROR', error)
-		}
-	}
 	@Get('readAll')
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async readAllTasks(@Headers() headers): Promise<IResponse> {
 		try {
-			var allTasks = await this.tasksService.readAllTasks(headers)
+			var response = await this.commentsService.readAllComments(headers)
 			return new ResponseSuccess(
 				'TASKS.READ_ALL_SUCCESS',
-				new AllTasksDto(allTasks)
+				new AllCommentsDto(response)
 			)
 		} catch (error) {
 			return new ResponseError('TASKS.READ_ALL_ERROR', error)
@@ -65,12 +51,18 @@ export class TasksController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async createTask(
-		@Body() createTaskDto: CreateTaskDto,
+		@Body() createCommentDto: CreateCommentDto,
 		@Headers() headers
 	): Promise<IResponse> {
 		try {
-			var task = await this.tasksService.createTask(createTaskDto, headers)
-			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new TaskDto(task))
+			var comment = await this.commentsService.createComment(
+				createCommentDto,
+				headers
+			)
+			return new ResponseSuccess(
+				'TASKS.UPDATE_SUCCESS',
+				new CommentDto(comment)
+			)
 		} catch (error) {
 			return new ResponseError('TASKS.UPDATE_ERROR', error)
 		}
@@ -79,12 +71,18 @@ export class TasksController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async updateTask(
-		@Body() updateTaskDto: UpdateTaskDto,
+		@Body() updateCommentDto: UpdateCommentDto,
 		@Headers() headers
 	): Promise<IResponse> {
 		try {
-			var task = await this.tasksService.updateTask(updateTaskDto, headers)
-			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new TaskDto(task))
+			var comment = await this.commentsService.updateComment(
+				updateCommentDto,
+				headers
+			)
+			return new ResponseSuccess(
+				'TASKS.UPDATE_SUCCESS',
+				new CommentDto(comment)
+			)
 		} catch (error) {
 			return new ResponseError('TASKS.UPDATE_ERROR', error)
 		}
@@ -94,12 +92,18 @@ export class TasksController {
 	@UseGuards(RolesGuard)
 	@Roles('User')
 	async deleteTask(
-		@Body() deleteTaskDto: DeleteTaskDto,
+		@Body() deleteCommentDto: DeleteCommentDto,
 		@Headers() headers
 	): Promise<IResponse> {
 		try {
-			var task = await this.tasksService.deleteTask(deleteTaskDto, headers)
-			return new ResponseSuccess('TASKS.UPDATE_SUCCESS', new AllTasksDto(task))
+			var comment = await this.commentsService.deleteComment(
+				deleteCommentDto,
+				headers
+			)
+			return new ResponseSuccess(
+				'TASKS.UPDATE_SUCCESS',
+				new AllCommentsDto(comment)
+			)
 		} catch (error) {
 			return new ResponseError('TASKS.UPDATE_ERROR', error)
 		}

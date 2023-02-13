@@ -1,3 +1,4 @@
 export { AddTaskBtn } from './AddTaskBtn/'
 export { TaskInfo } from './TaskInfo/'
-export { TaskUpdate } from './TaskUpdate/'
+export { TaskCreate } from './TaskCreate'
+// export { TaskUpdate } from './TaskUpdate'

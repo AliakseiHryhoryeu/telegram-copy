@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useFormik } from 'formik'
 
-import { PassResetSchema } from '../components/validation/PassResetValidation'
-
+import { passResetSchema } from '../components/validation/PassResetValidation'
 import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { RootState } from '../store'
 
@@ -22,7 +21,7 @@ const PassResetPage: FC = () => {
 		initialValues: {
 			email: '',
 		},
-		validationSchema: PassResetSchema,
+		validationSchema: passResetSchema,
 		onSubmit: values => {
 			// will be send mail to email
 		},
@@ -74,7 +73,10 @@ const PassResetPage: FC = () => {
 							/>
 						</div>
 						<button
-							type='submit'
+							type='button'
+							onClick={() => {
+								formik.handleSubmit()
+							}}
 							className={styles.passReset__form_button_passReset}
 						>
 							Send

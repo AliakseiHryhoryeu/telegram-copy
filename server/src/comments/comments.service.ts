@@ -4,20 +4,20 @@ import * as jwt from 'jsonwebtoken'
 import { Model } from 'mongoose'
 import * as _ from 'lodash'
 
-import { Task } from './interfaces/task.interface'
+import { Task } from './interfaces/comment.interface'
 import { User } from '../users/interfaces/user.interface'
 
 import { HeaderDto, IDecodedToken } from '../auth/dto/header.dto'
-import { CreateTaskDto } from './dto/create-task.dto'
-import { ReadTaskDto } from './dto/read-task'
-import { DeleteTaskDto } from './dto/delete-task'
-import { UpdateTaskDto } from './dto/update-task.dto'
+import { CreateCommentDto } from './dto/create-comment.dto'
+import { ReadCommentDto } from './dto/read-comment'
+import { DeleteCommentDto } from './dto/delete-comment'
+import { UpdateCommentDto } from './dto/update-comment.dto'
 import { default as config } from '../config'
 
 const jwtSecretKey = config.jwt.secretOrKey
 
 @Injectable()
-export class TasksService {
+export class CommentsService {
 	constructor(
 		@InjectModel('User') private readonly userModel: Model<User>,
 		@InjectModel('Task') private readonly taskModel: Model<Task>
@@ -35,8 +35,8 @@ export class TasksService {
 	}
 
 	//////////////////////////////////
-	async createTask(
-		taskDto: CreateTaskDto,
+	async createComment(
+		taskDto: CreateCommentDto,
 		headers: HeaderDto
 	): Promise<Task[]> {
 		try {
@@ -58,7 +58,7 @@ export class TasksService {
 			}
 
 			const createdTask = new this.taskModel(taskDto)
-			createdTask.userid = user._id
+			// createdTask.userid = user._id
 			user.tasks.push(createdTask._id)
 
 			await await createdTask.save()
@@ -71,33 +71,7 @@ export class TasksService {
 		}
 	}
 
-	async readTask(readTaskDto: ReadTaskDto, headers: HeaderDto): Promise<Task> {
-		try {
-			const token = headers.authorization.split(' ')[1]
-			if (!token) {
-				throw new HttpException(
-					'TASKS.AUTHORIZED_ERROR_TOKEN',
-					HttpStatus.UNAUTHORIZED
-				)
-			}
-			const decoded: IDecodedToken = jwt.verify(token, jwtSecretKey)
-
-			// ДОБАВИТЬ ПРОВЕРКУ ДРУЗЕЙ ПОЛЬЗОВАТЕЛЯ
-			const user = await this.findByUserid(decoded._id)
-			if (!user) {
-				throw new HttpException(
-					'TASKS.AUTHORIZED_ERROR',
-					HttpStatus.UNAUTHORIZED
-				)
-			}
-
-			return await this.findOneTask(readTaskDto.taskid)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
-	async readAllTasks(headers: HeaderDto): Promise<Task[]> {
+	async readAllComments(headers: HeaderDto): Promise<Task[]> {
 		try {
 			const token = headers.authorization.split(' ')[1]
 			if (!token) {
@@ -115,14 +89,14 @@ export class TasksService {
 				)
 			}
 
-			return await this.findAllTasks(user._id)
+			return await this.readAllComments(user._id)
 		} catch (e) {
 			console.log(e)
 		}
 	}
 
-	async updateTask(
-		updateTaskDto: UpdateTaskDto,
+	async updateComment(
+		updateTaskDto: UpdateCommentDto,
 		headers: HeaderDto
 	): Promise<Task> {
 		try {
@@ -141,17 +115,12 @@ export class TasksService {
 					HttpStatus.UNAUTHORIZED
 				)
 			}
-			const task = await this.findOneTask(updateTaskDto.taskid)
+			const task = await this.findOneTask(updateTaskDto.commentid)
 
-			if (updateTaskDto?.title) {
-				task.title = updateTaskDto.title
-			}
 			if (updateTaskDto?.text) {
 				task.text = updateTaskDto.text
 			}
-			if (updateTaskDto?.checked) {
-				task.checked = updateTaskDto.checked
-			}
+
 			await task.save()
 			return task
 		} catch (e) {
@@ -159,8 +128,8 @@ export class TasksService {
 		}
 	}
 
-	async deleteTask(
-		deleteTaskDto: DeleteTaskDto,
+	async deleteComment(
+		deleteTaskDto: DeleteCommentDto,
 		headers: HeaderDto
 	): Promise<Task[]> {
 		try {
@@ -180,7 +149,7 @@ export class TasksService {
 				)
 			}
 
-			await this.taskModel.findByIdAndDelete(deleteTaskDto.taskid)
+			await this.taskModel.findByIdAndDelete(deleteTaskDto.commentid)
 
 			return await this.findAllTasks(user._id)
 		} catch (e) {

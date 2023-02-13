@@ -9,7 +9,7 @@ export interface IUserState {
 export interface IUser {
 	username: string
 	email: string
-	tasks: string[]
+	tasks: ITask[]
 	contacts: IContacts
 }
 
@@ -27,7 +27,7 @@ export interface IUserAuthResponse {
 			username: string
 			email: string
 			contacts: IContacts
-			tasks: string[]
+			tasks: ITask[]
 		}
 	}
 }
@@ -40,26 +40,20 @@ export interface IUserResponse {
 			username: string
 			email: string
 			contacts: IContacts
-			tasks: string[]
+			tasks: ITask[]
 		}
 	}
 }
 
 export interface IContacts {
-	pending: IContactNotAdded[]
-	requests: IContactNotAdded[]
+	pending: IContact[]
+	requests: IContact[]
 	added: IContact[]
-}
-
-export interface IContactNotAdded {
-	_id: string
-	username: string
 }
 
 export interface IContact {
 	_id: string
 	username: string
-	tasks: ITask[]
 }
 
 export interface IContactsResponse {
@@ -68,4 +62,19 @@ export interface IContactsResponse {
 	data: {
 		contacts: IContacts
 	}
+}
+
+export const emptyState = {
+	activeUser: {
+		username: '',
+		email: '',
+		tasks: [],
+		contacts: {
+			pending: [],
+			requests: [],
+			added: [],
+		},
+	},
+	token: '',
+	isAuth: false,
 }

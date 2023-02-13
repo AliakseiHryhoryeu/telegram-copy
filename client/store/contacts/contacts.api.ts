@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { RootState } from '../'
+import { RootState } from '..'
 
-import { ITaskResponse, IAllTasksResponse } from './tasks.types'
+import { ITaskResponse, IAllTasksResponse } from './contacts.types'
 
 const serverIp = process.env.SERVER_IP
 

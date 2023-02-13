@@ -1,14 +1,33 @@
 import { FC, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
-// import Link from 'next/link'
+
 import { AddTaskBtn, TaskInfo } from 'src/components/Task/'
 import { MainPopup, Header } from 'src/components/Main/'
+import { TaskCreate } from 'src/components/Task/'
 
-import { TaskUpdate } from 'src/components/Task/'
+import { useActions } from 'src/hooks/useActions'
+import { useTypedSelector } from 'src/hooks/useTypedSelector'
+import { RootState } from 'src/store'
 
 import styles from '../styles/main.module.scss'
 
 const Home: FC = () => {
+	const { theme, isAuth, tasks } = useTypedSelector((state: RootState) => {
+		return {
+			theme: state.theme.theme,
+			isAuth: state.user.isAuth,
+			tasks: state.user.activeUser.tasks,
+		}
+	})
+	const router = useRouter()
+	const allActions = useActions()
+
+	useEffect(() => {
+		if (isAuth == false) {
+			router.push('/login')
+		}
+	})
 	return (
 		<>
 			<Head>
@@ -16,15 +35,19 @@ const Home: FC = () => {
 			</Head>
 			<main className={styles.main}>
 				<Header />
-				<TaskInfo id='124124' title='good task title' done={true} />
-				<TaskInfo id='1241224' title='good task title' done={true} />
-				<TaskInfo id='1241w1224' title='good task title' done={true} />
-				<TaskInfo id='124q211124' title='good task title' done={true} />
-				<TaskInfo id='124saghas124' title='good task title' done={true} />
-				<TaskInfo id='12dashaa4124' title='good task title' done={true} />
+				{tasks.map(item => {
+					return (
+						<TaskInfo
+							key={item._id}
+							taskid={item._id}
+							title={item.title}
+							checked={item.checked}
+						/>
+					)
+				})}
 				<AddTaskBtn />
 			</main>
-			<TaskUpdate />
+			<TaskCreate />
 			<MainPopup />
 		</>
 	)

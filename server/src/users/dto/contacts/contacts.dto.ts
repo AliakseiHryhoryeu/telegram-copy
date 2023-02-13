@@ -1,35 +1,28 @@
-export class ContactsDto {
-	constructor(object: any) {
-		this.contacts = object.contacts
+import { User } from 'users/interfaces/user.interface'
+import ITask from '../../../tasks/interfaces/task.interface'
+
+export class UserResponse {
+	constructor(user: User, contacts: IContacts, tasks: ITask[]) {
+		this._id = user._id
+		this.username = user.username
+		this.email = user.email
+		this.tasks = tasks
+		this.contacts = contacts
 	}
-	contacts: {
-		pending: string[] // req to user
-		requests: string[] // user requests
-		added: string[] // friends
-	}
+	readonly _id: string
+	readonly username: string
+	readonly email: string
+	tasks: ITask[]
+	contacts: IContacts
 }
 
 export interface IContacts {
-	pending: IContactNotAdded[]
-	requests: IContactNotAdded[]
+	pending: IContact[]
+	requests: IContact[]
 	added: IContact[]
-}
-
-export interface IContactNotAdded {
-	_id: string
-	username: string
 }
 
 export interface IContact {
 	_id: string
 	username: string
-	// tasks: ITask[]
-}
-
-export interface IContactsResponse {
-	success: boolean
-	message: string
-	data: {
-		contacts: IContacts
-	}
 }

@@ -5,34 +5,47 @@ import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { RootState } from 'src/store'
 
 import styles from './TaskInfo.module.scss'
+import { useActions } from 'src/hooks/useActions'
+import { useUpdateTaskMutation } from 'src/store/tasks/tasks.api'
 
 type TaskInfoProps = {
-	id: string
+	taskid: string
 	title: string
-	done: boolean
+	checked: boolean
 }
 
-export const TaskInfo: FC<TaskInfoProps> = ({ id, title, done }) => {
+export const TaskInfo: FC<TaskInfoProps> = ({ taskid, title, checked }) => {
 	const { theme } = useTypedSelector((state: RootState) => {
 		return {
 			theme: state.theme.theme,
 		}
 	})
-	const router = useRouter()
+	const [done, setCheck] = useState(checked)
 
-	const [check, setCheck] = useState(done)
+	const [updateTaskRequest, { isLoading: isLoading }] = useUpdateTaskMutation()
+
+	const toggleCheckbox = () => {
+		setCheck(!done)
+
+		updateTaskRequest({
+			taskid: taskid,
+			checked: !checked,
+		})
+	}
+	const router = useRouter()
+	const allActions = useActions()
 
 	return (
 		<div
-			id={id}
+			id={taskid}
 			className={`${styles[`taskInfo_${theme}`]} ${styles.taskInfo}`}
 		>
 			<div className={styles.taskInfo__wrapper}>
 				<input
 					className={styles.taskInfo__input}
-					checked={check}
+					checked={done}
 					type='checkbox'
-					onChange={e => setCheck(!check)}
+					onChange={e => toggleCheckbox()}
 				/>
 				<div
 					className={styles.taskInfo__title}

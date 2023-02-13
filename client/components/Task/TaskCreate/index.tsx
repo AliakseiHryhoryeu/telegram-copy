@@ -1,27 +1,25 @@
-import { useFormik } from 'formik'
 import React, { FC } from 'react'
+import { useFormik } from 'formik'
 
-import { useUpdateTaskMutation } from 'src/store/tasks/tasks.api'
-import { taskUpdateSchema } from 'src/components/validation/TaskUpdateValidation'
-import { useTypedSelector } from 'src/hooks/useTypedSelector'
+import { taskCreateSchema } from 'src/components/validation/TaskCreateValidation'
 import { useActions } from 'src/hooks/useActions'
+import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { RootState } from 'src/store'
+import {
+	useCreateTaskMutation,
+	useUpdateTaskMutation,
+} from 'src/store/tasks/tasks.api'
 
 import styles from './TaskUpdate.module.scss'
 
-type TaskUpdateProps = {
-	taskid: string
-}
-
-export const TaskUpdate: FC<TaskUpdateProps> = ({ taskid }) => {
+export const TaskCreate: FC = () => {
 	const { theme, isActivePopup } = useTypedSelector((state: RootState) => {
 		return {
 			theme: state.theme.theme,
 			isActivePopup: state.popups.taskUpdate,
 		}
 	})
-
-	const [updateTaskRequest, { isLoading: isLoading }] = useUpdateTaskMutation()
+	const [createTaskRequest, { isLoading: isLoading }] = useCreateTaskMutation()
 	const allActions = useActions()
 
 	const formik = useFormik({
@@ -29,10 +27,9 @@ export const TaskUpdate: FC<TaskUpdateProps> = ({ taskid }) => {
 			title: '',
 			text: '',
 		},
-		validationSchema: taskUpdateSchema,
+		validationSchema: taskCreateSchema,
 		onSubmit: values => {
-			updateTaskRequest({
-				taskid: taskid,
+			createTaskRequest({
 				title: values.title,
 				text: values.text,
 			})
@@ -43,10 +40,11 @@ export const TaskUpdate: FC<TaskUpdateProps> = ({ taskid }) => {
 		formik.values.title = ''
 		formik.values.text = ''
 	}
+
 	return (
 		<div className={`${styles[`taskUpdate__display_${isActivePopup}`]}`}>
 			<div className={`${styles[`taskUpdate_${theme}`]} ${styles.taskUpdate}`}>
-				<div className={styles.taskUpdate__wrapper}>
+				<form className={styles.taskUpdate__wrapper}>
 					<div className={styles.taskUpdate__wrapper_title}>Task title</div>
 					{formik?.errors && (
 						<div className={styles.taskUpdate__wrapper_error}>
@@ -94,11 +92,14 @@ export const TaskUpdate: FC<TaskUpdateProps> = ({ taskid }) => {
 							Add
 						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 			<div
 				className={styles.taskUpdate__bg}
-				onClick={e => allActions.toggleTaskUpdatePopup()}
+				onClick={e => {
+					clearFormik()
+					allActions.toggleTaskUpdatePopup()
+				}}
 			></div>
 		</div>
 	)

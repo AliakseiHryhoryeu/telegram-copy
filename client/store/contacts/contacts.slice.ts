@@ -1,22 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 // import uuid from 'react-uuid'
 
-import type { RootState } from '../'
+import type { RootState } from '..'
 import { userApi } from '../user/user.api'
-import { taskApi } from './tasks.api'
+import { taskApi } from './contacts.api'
 // import { taskSlice } from '../task/task.slice'
 import { userSlice } from '../user/user.slice'
 
-import { ITasksState, ITask } from './tasks.types'
+import { IContactsState, IContact } from './contacts.types'
 
 // const LocalStorage_allLists = JSON.parse(localStorage.getItem('allLists'))
 
-const initialState: ITasksState = {
-	tasks: [],
+const initialState: IContactsState = {
+	contacts: {
+		pending: [],
+		requests: [],
+		added: [],
+	},
 }
 
-export const taskSlice = createSlice({
-	name: 'taskSlice',
+export const contactSlice = createSlice({
+	name: 'contactSlice',
 	initialState,
 	reducers: {
 		updateLocalList: (
@@ -85,7 +89,7 @@ export const taskSlice = createSlice({
 	},
 })
 
-export default taskSlice.reducer
+export default contactSlice.reducer
 
-export const taskReducer = taskSlice.reducer
-export const taskActions = taskSlice.actions
+export const taskReducer = contactSlice.reducer
+export const taskActions = contactSlice.actions

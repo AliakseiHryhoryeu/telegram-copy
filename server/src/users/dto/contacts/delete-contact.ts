@@ -1,3 +1,3 @@
 export class DeleteContactDto {
-	readonly contactUsername: string
+	readonly contactid: string
 }

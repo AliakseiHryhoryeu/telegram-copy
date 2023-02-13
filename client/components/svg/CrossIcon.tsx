@@ -15,7 +15,7 @@ export const CrossIcon = () => {
 				d='M19,19,5,5M19,5,5,19'
 				fill='none'
 				stroke='#000'
-				stroke-linecap='round'
+				strokeLinecap='round'
 				strokeLinejoin='round'
 				strokeWidth='2'
 			></path>

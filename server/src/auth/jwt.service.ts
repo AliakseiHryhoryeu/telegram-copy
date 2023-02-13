@@ -9,10 +9,10 @@ import { InjectModel } from '../../node_modules/@nestjs/mongoose'
 export class JWTService {
 	constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-	async createToken(email, roles) {
+	async createToken(_id, roles) {
 		const expiresIn = config.jwt.expiresIn,
 			secretOrKey = config.jwt.secretOrKey
-		const userInfo = { email: email, roles: roles }
+		const userInfo = { _id: _id, roles: roles }
 		const token = jwt.sign(userInfo, secretOrKey, { expiresIn })
 		return {
 			expires_in: expiresIn,
@@ -21,7 +21,7 @@ export class JWTService {
 	}
 
 	async validateUser(signedUser): Promise<User> {
-		var userFromDb = await this.userModel.findOne({ email: signedUser.email })
+		var userFromDb = await this.userModel.findById(signedUser._id)
 		if (userFromDb) {
 			return userFromDb
 		}

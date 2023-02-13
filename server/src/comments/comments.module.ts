@@ -1,8 +1,8 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { TasksController } from './tasks.controller'
-import { TasksService } from './tasks.service'
-import { TaskSchema } from './schemas/task.schema'
+import { CommentsController } from './comments.controller'
+import { CommentsService } from './comments.service'
+import { CommentSchema } from './schemas/comment.schema'
 import { LoggerMiddleware } from '../common/middlewares/logger.middleware'
 // import { AuthService } from 'auth/auth.service'
 // import { JWTService } from 'auth/jwt.service'
@@ -12,20 +12,22 @@ import { UserSchema } from '../users/schemas/user.schema'
 import { UsersService } from '../users/users.service'
 import { JwtStrategy } from '../auth/passport/jwt.strategy'
 import { JWTService } from '../auth/jwt.service'
+import { TaskSchema } from 'tasks/schemas/task.schema'
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([
 			{ name: 'User', schema: UserSchema },
 			{ name: 'Task', schema: TaskSchema },
+			{ name: 'Comment', schema: CommentSchema },
 		]),
 	],
-	controllers: [TasksController],
-	providers: [TasksService, UsersService, JWTService, JwtStrategy],
-	exports: [TasksService],
+	controllers: [CommentsController],
+	providers: [CommentsService, UsersService, JWTService, JwtStrategy],
+	exports: [CommentsService],
 })
-export class TasksModule implements NestModule {
+export class CommentsModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer) {
-		consumer.apply(LoggerMiddleware).forRoutes(TasksController)
+		consumer.apply(LoggerMiddleware).forRoutes(CommentsController)
 	}
 }

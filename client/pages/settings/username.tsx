@@ -3,14 +3,13 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useFormik } from 'formik'
 
+import Header from 'src/components/Settings/Header'
+import { changeUsernameSchema } from 'src/components/validation/ChangeUsernameValidation'
 import { useChangeUsernameMutation } from 'src/store/user/user.api'
 import { useTypedSelector } from 'src/hooks/useTypedSelector'
 import { RootState } from 'src/store'
 
-import Header from 'src/components/Settings/Header'
-
 import styles from 'src/styles/settings.module.scss'
-import { changeUsernameSchema } from 'src/components/validation/ChangeUsernameValidation'
 
 const SettingsPage = () => {
 	const { theme, isAuth } = useTypedSelector((state: RootState) => {
@@ -25,11 +24,13 @@ const SettingsPage = () => {
 
 	const formik = useFormik({
 		initialValues: {
+			password: '',
 			newUsername: '',
 		},
 		validationSchema: changeUsernameSchema,
 		onSubmit: values => {
 			changeUsernameRequest({
+				password: values.password,
 				newUsername: values.newUsername,
 			})
 		},
@@ -54,6 +55,23 @@ const SettingsPage = () => {
 					<form className={styles.settings__change}>
 						<div className={styles.settings__change__wrapper}>
 							<div className={styles.settings__subtitle}>
+								Enter your current password
+							</div>
+							{formik?.errors && (
+								<div className={styles.settings__subtitle_error}>
+									{formik?.errors.password}
+								</div>
+							)}
+							<input
+								type='text'
+								name='password'
+								placeholder='Enter your current password.'
+								value={formik.values.password}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+							/>
+
+							<div className={styles.settings__subtitle}>
 								Enter your new username.
 							</div>
 							{formik?.errors && (
@@ -69,7 +87,13 @@ const SettingsPage = () => {
 								onChange={formik.handleChange}
 								onBlur={formik.handleBlur}
 							/>
-							<button type='submit' className={styles.settings__right}>
+							<button
+								type='button'
+								onClick={() => {
+									formik.handleSubmit()
+								}}
+								className={styles.settings__right}
+							>
 								Change username
 							</button>
 						</div>

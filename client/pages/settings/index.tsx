@@ -10,6 +10,7 @@ import { MessageBtnIcon } from 'src/components/svg/MessageBtnIcon'
 import { ArrowRight } from 'src/components/svg/ArrowRight'
 import { Logout } from 'src/components/svg/Logout'
 import { useRouter } from 'next/router'
+import { useActions } from 'src/hooks/useActions'
 
 const SettingsPage = () => {
 	const { theme, isAuth } = useTypedSelector((state: RootState) => {
@@ -19,9 +20,10 @@ const SettingsPage = () => {
 		}
 	})
 	const router = useRouter()
+	const allActions = useActions()
 
 	useEffect(() => {
-		if (isAuth === false) {
+		if (isAuth == false) {
 			router.push('/login')
 		}
 	}, [])
@@ -67,10 +69,17 @@ const SettingsPage = () => {
 					</div>
 					<div
 						className={`${styles.settings__wrapper} ${styles.settings__logout}`}
+						onClick={() => {
+							allActions.logout()
+							setTimeout(() => {
+								router.push('/login')
+							}, 400)
+						}}
 					>
 						<div className={styles.settings__left}>
 							<Logout /> <p>Logout</p>
 						</div>
+						<div className={styles.settings__right}></div>
 					</div>
 				</div>
 			</div>

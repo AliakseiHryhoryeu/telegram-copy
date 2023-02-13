@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 
 // import { UserActions } from 'app/store/actions'
@@ -196,7 +195,13 @@ const SignUpPage: FC = () => {
 							Please accept the terms and conditions to continue.
 						</div>
 					</div> */}
-						<button type='submit' className={styles.signup__form_button_signup}>
+						<button
+							type='button'
+							onClick={() => {
+								formik.handleSubmit()
+							}}
+							className={styles.signup__form_button_signup}
+						>
 							Sign up
 						</button>
 						<div className={styles.signup__button_login}>
