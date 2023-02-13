@@ -2,7 +2,7 @@
 
 ## [Frontend](./client/)
 
-- Next.js / React
+- Next.js 
 - Redux Toolkit
 - TypeScript
 - SCSS
@@ -15,11 +15,6 @@
 - TypeScript
 - MongoDB
 - Figma
-
-## Deployment
-
-- AWS IC2 / NGINX / PM2
-- Domain - https://www.cloudflare.com/
 
 ## Figma
 
