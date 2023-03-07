@@ -1,4 +1,4 @@
-# To do list - good deeds Next.js - Nest.js - MongoDB
+# Telegram copy, Next.js - Nest.js - MongoDB
 
 ## [Frontend](./client/)
 
